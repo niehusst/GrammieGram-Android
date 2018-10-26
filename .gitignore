@@ -78,10 +78,6 @@ obj/
 ehthumbs.db
 Thumbs.db
 
-# Legacy Eclipse project files
-.classpath
-.project
-
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
@@ -101,17 +97,7 @@ hs_err_pid*
 # JIRA plugin
 atlassian-ide-plugin.xml
 
-# Mongo Explorer plugin
-.idea/mongoSettings.xml
-
-# Crashlytics plugin (for Android Studio and IntelliJ)
-com_crashlytics_export_strings.xml
-crashlytics.properties
-crashlytics-build.properties
-fabric.properties
 
 # End of https://www.gitignore.io/api/androidstudio
 
-# FB infer
-infer-out/
 

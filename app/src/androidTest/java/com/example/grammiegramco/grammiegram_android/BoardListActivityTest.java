@@ -1,5 +1,11 @@
 package com.example.grammiegramco.grammiegram_android;
 
+import android.app.Activity;
+import android.app.Instrumentation;
+import android.content.Context;
+import android.content.Intent;
+import android.net.wifi.WifiManager;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.filters.MediumTest;
@@ -10,17 +16,27 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+
+import androidx.test.espresso.intent.rule.IntentsTestRule;
 
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.v4.content.ContextCompat.getSystemService;
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.espresso.intent.Intents.intended;
+import static androidx.test.espresso.intent.Intents.intending;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.isInternal;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.toPackage;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.AllOf.allOf;
 
 /**
@@ -35,12 +51,20 @@ public class BoardListActivityTest {
 
     // set up activity to test
     @Rule
-    public ActivityTestRule<BoardListActivity> rule = new ActivityTestRule(BoardListActivity.class);
+    public IntentsTestRule<BoardListActivity> rule =
+            new IntentsTestRule<BoardListActivity>(BoardListActivity.class);
 
     @Before
     public void setUp() {
-        /* TODO: populate the activity recycler with large number of board items
-           each item has board name (R.string.rv_example_text + position)        */
+        /* TODO: populate the activity recycler with large number of board items (use mockito?)
+           each item has board name (R.string.rv_example_text + position)  */
+    }
+
+    @Before
+    public void stubExternalIntents() {
+        // set up intents from external packages to be stubbed
+        intending(not(isInternal()))
+                .respondWith(new Instrumentation.ActivityResult(Activity.RESULT_OK, null));
     }
 
     /**
@@ -63,8 +87,8 @@ public class BoardListActivityTest {
         // clicking item launches BoardActivity
         recycler.perform(actionOnItemAtPosition(ITEM_BELOW_FOLD, click()));
 
-        // TODO: check intent values are correct
-
+        // check intent is launched to correct place
+        intended(hasComponent(BoardActivity.class.getName()));
     }
 
     /**
@@ -79,8 +103,8 @@ public class BoardListActivityTest {
         // clicking button launches SettingsFragment
         btn.perform(click());
 
-        // TODO: check intent values are correct
-
+        // check intent is launched to correct place
+        intended(hasComponent(SettingsFragment.class.getName()));
     }
 
     /**
@@ -95,8 +119,8 @@ public class BoardListActivityTest {
         // clicking button launches LoginActivity
         btn.perform(click());
 
-        // TODO: check intent values are correct
-
+        // check intent was launched to correct activity
+        intended(hasComponent(LoginActivity.class.getName()));
     }
 
     /**
@@ -116,7 +140,6 @@ public class BoardListActivityTest {
                 getString(R.string.loading_text);                    //get text name
         onView(withText(loadText)).check(matches(isDisplayed()));
 
-
     }
 
     /**
@@ -124,7 +147,13 @@ public class BoardListActivityTest {
      */
     @Test
     public void wifiErrorTest() {
-        // TODO: simulate no wifi
+        // set up mockito spy to check method calls
+        IntentsTestRule<BoardListActivity> boardSpy = Mockito.spy(rule);
+
+        // simulate no wifi
+        Context context = InstrumentationRegistry.getInstrumentation().getContext();
+        WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        wifi.setWifiEnabled(false);
 
         // check image view is displayed
         onView(withId(R.id.error_image)).check(matches(isDisplayed()));
@@ -139,8 +168,8 @@ public class BoardListActivityTest {
         // check button is displayed
         ViewInteraction retry = onView(withId(R.id.retry_button)).check(matches(isDisplayed()));
 
-        // TODO: check clicking button recalls the API
-
+        // check clicking button recalls the API
+        Mockito.verify(boardSpy).getActivity().getBoards();
     }
 
     /**
@@ -149,6 +178,9 @@ public class BoardListActivityTest {
      */
     @Test
     public void serverErrorTest() {
+        // set up mockito spy to check method calls
+        IntentsTestRule<BoardListActivity> boardSpy = Mockito.spy(rule);
+
         // TODO: simulate server err
 
         // check image view is displayed
@@ -158,14 +190,14 @@ public class BoardListActivityTest {
         onView(withId(R.id.error_text)).check(isDisplayed());
 
         String errText = getApplicationContext().getResources().   //get str resource from file
-                getString(R.string.server_error);                   //get text name
+                getString(R.string.server_error);                  //get text name
         onView(withText(errText)).check(matches(isDisplayed()));
 
         // check button with correct text is displayed
         ViewInteraction retry = onView(withId(R.id.retry_button)).check(matches(isDisplayed()));
 
-        // TODO: check clicking button recalls the API
-
+        // check clicking button recalls the API
+        Mockito.verify(boardSpy).getActivity().getBoards();
 
     }
 }

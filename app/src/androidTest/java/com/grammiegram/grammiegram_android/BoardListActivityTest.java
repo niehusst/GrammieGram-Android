@@ -1,4 +1,4 @@
-package com.example.grammiegramco.grammiegram_android;
+package com.grammiegram.grammiegram_android;
 
 import android.app.Activity;
 import android.app.Instrumentation;

@@ -1,21 +1,30 @@
 package com.grammiegram.grammiegram_android;
 
+import com.grammiegram.grammiegram_android.POJO.Board;
+import com.grammiegram.grammiegram_android.POJO.BoardListResponse;
+import com.grammiegram.grammiegram_android.POJO.Gram;
+import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
+import com.grammiegram.grammiegram_android.POJO.LoginResponse;
+import com.grammiegram.grammiegram_android.POJO.SettingsResponse;
+import com.grammiegram.grammiegram_android.interfaces.GrammieGramAPI;
+
 import java.util.ArrayList;
 
+import retrofit2.Call;
 import retrofit2.mock.BehaviorDelegate;
 
 /**
  * Mocks API responses to retrofit object
  */
-public class MockGrammieGramService implements GrammieGramService {
+public class MockGrammieGramService implements GrammieGramAPI {
 
-    private final BehaviorDelegate<GrammieGramService> delegate;
+    private final BehaviorDelegate<GrammieGramAPI> delegate;
 
     /**
      * Construct the class from a mockRetrofit object
      * @param service
      */
-    public MockGrammieGramService(BehaviorDelegate<GrammieGramService> service) {
+    public MockGrammieGramService(BehaviorDelegate<GrammieGramAPI> service) {
         this.delegate = service;
     }
 

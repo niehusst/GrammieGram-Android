@@ -2,20 +2,28 @@ package com.grammiegram.grammiegram_android;
 
 import android.util.Log;
 
+import com.grammiegram.grammiegram_android.POJO.BoardListResponse;
+import com.grammiegram.grammiegram_android.POJO.ErrorResponse;
+import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
+import com.grammiegram.grammiegram_android.POJO.LoginResponse;
+import com.grammiegram.grammiegram_android.POJO.SettingsResponse;
+import com.grammiegram.grammiegram_android.interfaces.GrammieGramAPI;
+
 import java.util.ArrayList;
 
 import okhttp3.MediaType;
 import okhttp3.ResponseBody;
+import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.mock.Calls;
 import retrofit2.mock.BehaviorDelegate;
 
 
-public class MockGrammieGramServiceError implements GrammieGramService {
+public class MockGrammieGramServiceError implements GrammieGramAPI {
     private static final String TAG = "MockResponseError";
-    private BehaviorDelegate<GrammieGramService> delegate;
+    private BehaviorDelegate<GrammieGramAPI> delegate;
 
-    public MockGrammieGramServiceError(BehaviorDelegate<GrammieGramService> service) {
+    public MockGrammieGramServiceError(BehaviorDelegate<GrammieGramAPI> service) {
         this.delegate = service;
     }
 
@@ -39,7 +47,7 @@ public class MockGrammieGramServiceError implements GrammieGramService {
             return this.delegate.returning(Calls.response(response)).getBoards();
         } catch (Exception e) {
             Log.e(TAG, "JSON Processing exception:",e);
-            return (Call<BoardListResponse>) Calls.failure(e);
+            return Calls.failure(e);
         }
     }
 
@@ -64,7 +72,7 @@ public class MockGrammieGramServiceError implements GrammieGramService {
             return this.delegate.returning(Calls.response(response)).getBoards();
         } catch (Exception e) {
             Log.e(TAG, "JSON Processing exception:",e);
-            return (Call<LoginResponse>) Calls.failure(e);
+            return Calls.failure(e);
         }
 
     }
@@ -90,7 +98,7 @@ public class MockGrammieGramServiceError implements GrammieGramService {
             return this.delegate.returning(Calls.response(response)).getBoards();
         } catch (Exception e) {
             Log.e(TAG, "JSON Processing exception:",e);
-            return (Call<GramsListResponse>) Calls.failure(e);
+            return Calls.failure(e);
         }
     }
 
@@ -115,7 +123,7 @@ public class MockGrammieGramServiceError implements GrammieGramService {
             return this.delegate.returning(Calls.response(response)).getBoards();
         } catch (Exception e) {
             Log.e(TAG, "JSON Processing exception:",e);
-            return (Call<SettingsResponse>) Calls.failure(e);
+            return Calls.failure(e);
         }
     }
 

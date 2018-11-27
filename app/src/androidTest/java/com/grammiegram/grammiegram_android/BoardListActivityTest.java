@@ -79,7 +79,7 @@ public class BoardListActivityTest {
 
         server = new MockWebServer();
         server.start();
-        //TODO: set BASE_URL = server.url("/").toString();
+        GrammieGramService.BASE_URL = server.url("/").toString();
     }
 
     @Before

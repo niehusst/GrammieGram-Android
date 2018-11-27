@@ -36,11 +36,9 @@ public class MockGrammieGramServiceError implements GrammieGramAPI {
         //set up error response
         ErrorResponse error = new ErrorResponse();
 
-        error.setCode(500);
-        error.setMessage("ServerError");
+        error.setError("ServerError");
 
-
-        String json = ""; //TODO: set json string
+        String json = error.convertToJson();
         try {
             //server error getting data
             Response response = Response.error(500, ResponseBody.create(MediaType.parse("application/json") ,json));
@@ -61,15 +59,13 @@ public class MockGrammieGramServiceError implements GrammieGramAPI {
         //set up error response
         ErrorResponse error = new ErrorResponse();
 
-        error.setCode(400);
-        error.setMessage("Please provide correct username and password");
+        error.setError("Please provide correct username and password");
 
-
-        String json = error.convertToJson(); //TODO: set json string
+        String json = error.convertToJson();
         try {
             //user error inputting bad username password
             Response response = Response.error(400, ResponseBody.create(MediaType.parse("application/json") ,json));
-            return this.delegate.returning(Calls.response(response)).getBoards();
+            return this.delegate.returning(Calls.response(response)).login(username, password);
         } catch (Exception e) {
             Log.e(TAG, "JSON Processing exception:",e);
             return Calls.failure(e);
@@ -87,15 +83,13 @@ public class MockGrammieGramServiceError implements GrammieGramAPI {
         //set up error response
         ErrorResponse error = new ErrorResponse();
 
-        error.setCode(500);
-        error.setMessage("ServerError");
+        error.setError("ServerError");
 
-
-        String json = ""; //TODO: set json string
+        String json = error.convertToJson();
         try {
             //server error getting grams
             Response response = Response.error(500, ResponseBody.create(MediaType.parse("application/json") ,json));
-            return this.delegate.returning(Calls.response(response)).getBoards();
+            return this.delegate.returning(Calls.response(response)).getGrams();
         } catch (Exception e) {
             Log.e(TAG, "JSON Processing exception:",e);
             return Calls.failure(e);
@@ -107,20 +101,17 @@ public class MockGrammieGramServiceError implements GrammieGramAPI {
      * @return - stubbed API SettingsResponse object
      */
     @Override
-    public Call<SettingsResponse> updateSettings(boolean audioNotification, boolean profanityFilter, int fontSize) {
+    public Call<SettingsResponse> updateSettings(int fontSize, boolean audioNotification, boolean profanityFilter) {
         //set stubbed data into response object
-        //set up error response
         ErrorResponse error = new ErrorResponse();
 
-        error.setCode(500);
-        error.setMessage("ServerError");
+        error.setError("ServerError");
 
-
-        String json = ""; //TODO: set json string
+        String json = error.convertToJson();
         try {
             //server error setting new data in database
             Response response = Response.error(500, ResponseBody.create(MediaType.parse("application/json") ,json));
-            return this.delegate.returning(Calls.response(response)).getBoards();
+            return this.delegate.returning(Calls.response(response)).updateSettings(fontSize, audioNotification, profanityFilter);
         } catch (Exception e) {
             Log.e(TAG, "JSON Processing exception:",e);
             return Calls.failure(e);

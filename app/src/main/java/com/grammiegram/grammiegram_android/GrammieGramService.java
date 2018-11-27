@@ -4,16 +4,11 @@ import com.grammiegram.grammiegram_android.POJO.BoardListResponse;
 import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
 import com.grammiegram.grammiegram_android.POJO.LoginResponse;
 import com.grammiegram.grammiegram_android.POJO.SettingsResponse;
-import com.grammiegram.grammiegram_android.interfaces.APIResponse;
 import com.grammiegram.grammiegram_android.interfaces.CallBack;
 import com.grammiegram.grammiegram_android.interfaces.GrammieGramAPI;
 
-import java.lang.annotation.Annotation;
-
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.Converter;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -23,9 +18,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class GrammieGramService {
 
-    private Retrofit retrofit;
     private GrammieGramAPI api;
     private CallBack callBack;
+    public static String BASE_URL = "https://grammiegram.com/api/";
 
     /**
      * Make the retrofit api objects that will be used to call the GrammieGram API
@@ -34,8 +29,8 @@ public class GrammieGramService {
      *                 that will handle the responses from the api.
      */
     public GrammieGramService(CallBack callBack) {
-        this.retrofit = new Retrofit.Builder()
-                .baseUrl("https://grammiegram.com/api/")
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         this.api = retrofit.create(GrammieGramAPI.class);

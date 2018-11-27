@@ -60,8 +60,8 @@ public class RetrofitAPITest {
         Assert.assertTrue(response.isSuccessful());
         Assert.assertEquals("grammiegram", response.body().getUsername());
         Assert.assertEquals("Gram", response.body().getFirstName());
-        Assert.assertEquals("Grammie", response.body().getBoardList().get(0).getFirstName());
-        Assert.assertEquals("Gram", response.body().getBoardList().get(0).getLastName());
+        Assert.assertEquals("Grammie", response.body().getBoardList().get(0).getBoardFirstName());
+        Assert.assertEquals("Gram", response.body().getBoardList().get(0).getBoardLastName());
         Assert.assertEquals("grammie", response.body().getBoardNames().get(0));
     }
 
@@ -87,7 +87,7 @@ public class RetrofitAPITest {
         GrammieGramAPI mockAPI = new MockGrammieGramService(delegate);
 
         //get and execute api call
-        Call<LoginResponse> login = mockAPI.login();
+        Call<LoginResponse> login = mockAPI.login("username", "password");
         Response<LoginResponse> response = login.execute();
 
         //assert response has expected data
@@ -103,7 +103,7 @@ public class RetrofitAPITest {
         GrammieGramAPI mockAPI = new MockGrammieGramServiceError(delegate);
 
         //get and execute api call
-        Call<LoginResponse> login = mockAPI.login();
+        Call<LoginResponse> login = mockAPI.login("username", "password");
         Response<LoginResponse> response = login.execute();
 
         //assert response has expected data
@@ -151,7 +151,7 @@ public class RetrofitAPITest {
         GrammieGramAPI mockAPI = new MockGrammieGramService(delegate);
 
         //get and execute api call
-        Call<SettingsResponse> update = mockAPI.updateSettings();
+        Call<SettingsResponse> update = mockAPI.updateSettings(12, true, true);
         Response<SettingsResponse> response = update.execute();
 
         //assert response has expected data
@@ -165,8 +165,8 @@ public class RetrofitAPITest {
         BehaviorDelegate<GrammieGramAPI> delegate = mockRetrofit.create(GrammieGramAPI.class);
         GrammieGramAPI mockAPI = new MockGrammieGramServiceError(delegate);
 
-        //get and execute api call
-        Call<SettingsResponse> update = mockAPI.updateSettings();
+        //get and execute api call (for clarity, input has no effect on resulting stubbed outputs)
+        Call<SettingsResponse> update = mockAPI.updateSettings(999, false, false);
         Response<SettingsResponse> response = update.execute();
 
         //assert response has expected data

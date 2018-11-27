@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">GrammieGram_Android</string>
+    <string name="app_name">GrammieGram</string>
+    <string name="rv_example_text">Example Board</string>
+    <string name="loading_text">Fetching Data &#8230;</string>
+    <string name="wifi_error">WiFi Not Found</string>
+    <string name="server_error">We are having difficulty fetching data at the moment.\nPlease try again later.</string>
 </resources>

@@ -42,6 +42,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.7.22'
     androidTestImplementation 'org.mockito:mockito-android:2.7.22'
+    implementation 'com.squareup.retrofit2:retrofit-mock:2.5.0'
 
     // CORE
     androidTestImplementation 'androidx.test:core:1.0.0'

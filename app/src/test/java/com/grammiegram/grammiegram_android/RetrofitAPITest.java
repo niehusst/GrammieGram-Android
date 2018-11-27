@@ -3,6 +3,7 @@ package com.grammiegram.grammiegram_android;
 import android.content.Context;
 
 import com.grammiegram.grammiegram_android.POJO.BoardListResponse;
+import com.grammiegram.grammiegram_android.POJO.ErrorResponse;
 import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
 import com.grammiegram.grammiegram_android.POJO.LoginResponse;
 import com.grammiegram.grammiegram_android.POJO.SettingsResponse;
@@ -15,8 +16,11 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Converter;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -62,7 +66,7 @@ public class RetrofitAPITest {
         Assert.assertEquals("Gram", response.body().getFirstName());
         Assert.assertEquals("Grammie", response.body().getBoardList().get(0).getBoardFirstName());
         Assert.assertEquals("Gram", response.body().getBoardList().get(0).getBoardLastName());
-        Assert.assertEquals("grammie", response.body().getBoardNames().get(0));
+        Assert.assertEquals("grammie", response.body().getBoardList().get(0).getBoardDisplayName());
     }
 
     @Test
@@ -77,7 +81,13 @@ public class RetrofitAPITest {
 
         //assert response has expected data
         Assert.assertFalse(response.isSuccessful());
-        Assert.assertEquals("ServerError", response.body().getError());
+
+        Converter<ResponseBody, ErrorResponse> errorConverter =
+                retrofit.responseBodyConverter(ErrorResponse.class, new Annotation[0]);
+        ErrorResponse error = errorConverter.convert(response.errorBody());
+
+        Assert.assertEquals(500, response.code());
+        Assert.assertEquals("ServerError", error.getError());
     }
 
     @Test
@@ -108,7 +118,13 @@ public class RetrofitAPITest {
 
         //assert response has expected data
         Assert.assertFalse(response.isSuccessful());
-        Assert.assertEquals("Please provide correct username and password", response.body().getError());
+        //convert expected returned response to ErrorResponse
+        Converter<ResponseBody, ErrorResponse> errorConverter =
+                retrofit.responseBodyConverter(ErrorResponse.class, new Annotation[0]);
+        ErrorResponse error = errorConverter.convert(response.errorBody());
+
+        Assert.assertEquals(400, response.code());
+        Assert.assertEquals("Please provide correct username and password", error.getError());
     }
 
     @Test
@@ -141,7 +157,13 @@ public class RetrofitAPITest {
 
         //assert response has expected data
         Assert.assertFalse(response.isSuccessful());
-        Assert.assertEquals("ServerError", response.body().getError());
+        //convert expected returned response to ErrorResponse
+        Converter<ResponseBody, ErrorResponse> errorConverter =
+                retrofit.responseBodyConverter(ErrorResponse.class, new Annotation[0]);
+        ErrorResponse error = errorConverter.convert(response.errorBody());
+
+        Assert.assertEquals(500, response.code());
+        Assert.assertEquals("ServerError", error.getError());
     }
 
     @Test
@@ -171,6 +193,12 @@ public class RetrofitAPITest {
 
         //assert response has expected data
         Assert.assertFalse(response.isSuccessful());
-        Assert.assertEquals("ServerError", response.body().getError());
+        //convert expected returned response to ErrorResponse
+        Converter<ResponseBody, ErrorResponse> errorConverter =
+                retrofit.responseBodyConverter(ErrorResponse.class, new Annotation[0]);
+        ErrorResponse error = errorConverter.convert(response.errorBody());
+
+        Assert.assertEquals(500, response.code());
+        Assert.assertEquals("ServerError", error.getError());
     }
 }

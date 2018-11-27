@@ -68,7 +68,7 @@ public class RetrofitAPITest {
 
         //assert response has expected data
         Assert.assertFalse(response.isSuccessful());
-        //TODO assert contents
+        Assert.assertEquals("ServerError", response.body().getError());
     }
 
     @Test
@@ -99,7 +99,7 @@ public class RetrofitAPITest {
 
         //assert response has expected data
         Assert.assertFalse(response.isSuccessful());
-        //TODO check contents
+        Assert.assertEquals("Please provide correct username and password", response.body().getError());
     }
 
     @Test
@@ -132,7 +132,7 @@ public class RetrofitAPITest {
 
         //assert response has expected data
         Assert.assertFalse(response.isSuccessful());
-        //TODO check contetns
+        Assert.assertEquals("ServerError", response.body().getError());
     }
 
     @Test
@@ -162,6 +162,6 @@ public class RetrofitAPITest {
 
         //assert response has expected data
         Assert.assertFalse(response.isSuccessful());
-        //TODO check contetnts
+        Assert.assertEquals("ServerError", response.body().getError());
     }
 }

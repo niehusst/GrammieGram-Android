@@ -2,12 +2,21 @@ package com.grammiegram.grammiegram_android;
 
 import android.content.Context;
 
+import com.grammiegram.grammiegram_android.POJO.BoardListResponse;
+import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
+import com.grammiegram.grammiegram_android.POJO.LoginResponse;
+import com.grammiegram.grammiegram_android.POJO.SettingsResponse;
+import com.grammiegram.grammiegram_android.interfaces.GrammieGramAPI;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.io.IOException;
+
+import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -38,10 +47,10 @@ public class RetrofitAPITest {
     }
 
     @Test
-    public void boardListSuccessTest() {
+    public void boardListSuccessTest() throws IOException {
         //create mock retrofit API that returns stubbed successful responses
-        BehaviorDelegate<GrammieGramService> delegate = mockRetrofit.create(GrammieGramService.class);
-        GrammieGramService mockAPI = new MockGrammieGramService(delegate);
+        BehaviorDelegate<GrammieGramAPI> delegate = mockRetrofit.create(GrammieGramAPI.class);
+        GrammieGramAPI mockAPI = new MockGrammieGramService(delegate);
 
         //get and execute api call
         Call<BoardListResponse> boardList = mockAPI.getBoards();
@@ -51,16 +60,16 @@ public class RetrofitAPITest {
         Assert.assertTrue(response.isSuccessful());
         Assert.assertEquals("grammiegram", response.body().getUsername());
         Assert.assertEquals("Gram", response.body().getFirstName());
-        Assert.assertEquals("Grammie", response.body().getBoardList().get(0).getFirstName());
-        Assert.assertEquals("Gram", response.body().getBoardList().get(0).getLastName());
+        Assert.assertEquals("Grammie", response.body().getBoardList().get(0).getBoardFirstName());
+        Assert.assertEquals("Gram", response.body().getBoardList().get(0).getBoardLastName());
         Assert.assertEquals("grammie", response.body().getBoardNames().get(0));
     }
 
     @Test
-    public void boardListFailureTest() {
+    public void boardListFailureTest() throws IOException {
         //create mock retrofit API that returns stubbed unsuccessful responses
-        BehaviorDelegate<GrammieGramService> delegate = mockRetrofit.create(GrammieGramService.class);
-        GrammieGramService mockAPI = new MockGrammieGramServiceError(delegate);
+        BehaviorDelegate<GrammieGramAPI> delegate = mockRetrofit.create(GrammieGramAPI.class);
+        GrammieGramAPI mockAPI = new MockGrammieGramServiceError(delegate);
 
         //get and execute api call
         Call<BoardListResponse> boardList = mockAPI.getBoards();
@@ -72,13 +81,13 @@ public class RetrofitAPITest {
     }
 
     @Test
-    public void loginSuccessTest() {
+    public void loginSuccessTest() throws IOException {
         //create mock retrofit API that returns stubbed successful responses
-        BehaviorDelegate<GrammieGramService> delegate = mockRetrofit.create(GrammieGramService.class);
-        GrammieGramService mockAPI = new MockGrammieGramService(delegate);
+        BehaviorDelegate<GrammieGramAPI> delegate = mockRetrofit.create(GrammieGramAPI.class);
+        GrammieGramAPI mockAPI = new MockGrammieGramService(delegate);
 
         //get and execute api call
-        Call<LoginResponse> login = mockAPI.login();
+        Call<LoginResponse> login = mockAPI.login("username", "password");
         Response<LoginResponse> response = login.execute();
 
         //assert response has expected data
@@ -88,13 +97,13 @@ public class RetrofitAPITest {
     }
 
     @Test
-    public void loginFailureTest() {
+    public void loginFailureTest() throws IOException {
         //create mock retrofit API that returns stubbed unsuccessful responses
-        BehaviorDelegate<GrammieGramService> delegate = mockRetrofit.create(GrammieGramService.class);
-        GrammieGramService mockAPI = new MockGrammieGramServiceError(delegate);
+        BehaviorDelegate<GrammieGramAPI> delegate = mockRetrofit.create(GrammieGramAPI.class);
+        GrammieGramAPI mockAPI = new MockGrammieGramServiceError(delegate);
 
         //get and execute api call
-        Call<LoginResponse> login = mockAPI.login();
+        Call<LoginResponse> login = mockAPI.login("username", "password");
         Response<LoginResponse> response = login.execute();
 
         //assert response has expected data
@@ -103,10 +112,10 @@ public class RetrofitAPITest {
     }
 
     @Test
-    public void getGramsSuccessTest() {
+    public void getGramsSuccessTest() throws IOException {
         //create mock retrofit API that returns stubbed successful responses
-        BehaviorDelegate<GrammieGramService> delegate = mockRetrofit.create(GrammieGramService.class);
-        GrammieGramService mockAPI = new MockGrammieGramService(delegate);
+        BehaviorDelegate<GrammieGramAPI> delegate = mockRetrofit.create(GrammieGramAPI.class);
+        GrammieGramAPI mockAPI = new MockGrammieGramService(delegate);
 
         //get and execute api call
         Call<GramsListResponse> grams = mockAPI.getGrams();
@@ -121,10 +130,10 @@ public class RetrofitAPITest {
     }
 
     @Test
-    public void getGramsFailureTest() {
+    public void getGramsFailureTest() throws IOException {
         //create mock retrofit API that returns stubbed unsuccessful responses
-        BehaviorDelegate<GrammieGramService> delegate = mockRetrofit.create(GrammieGramService.class);
-        GrammieGramService mockAPI = new MockGrammieGramServiceError(delegate);
+        BehaviorDelegate<GrammieGramAPI> delegate = mockRetrofit.create(GrammieGramAPI.class);
+        GrammieGramAPI mockAPI = new MockGrammieGramServiceError(delegate);
 
         //get and execute api call
         Call<GramsListResponse> grams = mockAPI.getGrams();
@@ -136,13 +145,13 @@ public class RetrofitAPITest {
     }
 
     @Test
-    public void updatingSettingsSuccessTest() {
+    public void updatingSettingsSuccessTest() throws IOException {
         //create mock retrofit API that returns stubbed successful responses
-        BehaviorDelegate<GrammieGramService> delegate = mockRetrofit.create(GrammieGramService.class);
-        GrammieGramService mockAPI = new MockGrammieGramService(delegate);
+        BehaviorDelegate<GrammieGramAPI> delegate = mockRetrofit.create(GrammieGramAPI.class);
+        GrammieGramAPI mockAPI = new MockGrammieGramService(delegate);
 
         //get and execute api call
-        Call<SettingsResponse> update = mockAPI.updateSettings();
+        Call<SettingsResponse> update = mockAPI.updateSettings(12, true, true);
         Response<SettingsResponse> response = update.execute();
 
         //assert response has expected data
@@ -151,13 +160,13 @@ public class RetrofitAPITest {
     }
 
     @Test
-    public void updateSettingsFailureTest() {
+    public void updateSettingsFailureTest() throws IOException {
         //create mock retrofit API that returns stubbed unsuccessful responses
-        BehaviorDelegate<GrammieGramService> delegate = mockRetrofit.create(GrammieGramService.class);
-        GrammieGramService mockAPI = new MockGrammieGramServiceError(delegate);
+        BehaviorDelegate<GrammieGramAPI> delegate = mockRetrofit.create(GrammieGramAPI.class);
+        GrammieGramAPI mockAPI = new MockGrammieGramServiceError(delegate);
 
-        //get and execute api call
-        Call<SettingsResponse> update = mockAPI.updateSettings();
+        //get and execute api call (for clarity, input has no effect on resulting stubbed outputs)
+        Call<SettingsResponse> update = mockAPI.updateSettings(999, false, false);
         Response<SettingsResponse> response = update.execute();
 
         //assert response has expected data

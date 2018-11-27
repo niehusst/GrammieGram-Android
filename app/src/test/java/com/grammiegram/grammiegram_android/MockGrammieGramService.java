@@ -1,21 +1,30 @@
 package com.grammiegram.grammiegram_android;
 
+import com.grammiegram.grammiegram_android.POJO.Board;
+import com.grammiegram.grammiegram_android.POJO.BoardListResponse;
+import com.grammiegram.grammiegram_android.POJO.Gram;
+import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
+import com.grammiegram.grammiegram_android.POJO.LoginResponse;
+import com.grammiegram.grammiegram_android.POJO.SettingsResponse;
+import com.grammiegram.grammiegram_android.interfaces.GrammieGramAPI;
+
 import java.util.ArrayList;
 
+import retrofit2.Call;
 import retrofit2.mock.BehaviorDelegate;
 
 /**
  * Mocks API responses to retrofit object
  */
-public class MockGrammieGramService implements GrammieGramService {
+public class MockGrammieGramService implements GrammieGramAPI {
 
-    private final BehaviorDelegate<GrammieGramService> delegate;
+    private final BehaviorDelegate<GrammieGramAPI> delegate;
 
     /**
      * Construct the class from a mockRetrofit object
      * @param service
      */
-    public MockGrammieGramService(BehaviorDelegate<GrammieGramService> service) {
+    public MockGrammieGramService(BehaviorDelegate<GrammieGramAPI> service) {
         this.delegate = service;
     }
 
@@ -27,21 +36,18 @@ public class MockGrammieGramService implements GrammieGramService {
     public Call<BoardListResponse> getBoards() {
         //create a stubbed instance of api response
         Board board = new Board();
-        board.setFirstName("Grammie");
-        board.setLastName("Gram");
+        board.setBoardFirstName("Grammie");
+        board.setBoardLastName("Gram");
+        board.setBoardDisplayName("grammie");
 
         ArrayList<Board> boardList = new ArrayList<>();
         boardList.add(board);
-
-        ArrayList<String> displayNames = new ArrayList<>();
-        displayNames.add("grammie");
 
         //set stubbed data into response object
         BoardListResponse response = new BoardListResponse();
         response.setUsername("grammiegram");
         response.setFirstName("Gram");
         response.setBoardList(boardList);
-        response.setBoardNames(displayNames);
 
         return this.delegate.returningResponse(response).getBoards();
     }
@@ -51,12 +57,8 @@ public class MockGrammieGramService implements GrammieGramService {
      * @return - stubbed API LoginResponse object
      */
     @Override
-    public Call<LoginResponse> login(String username, String password) { //TODO; correct way to use user/pass?
-        //create a stubbed instance of api response
-
-        //send username and password
-        //receive authenticated
-
+    public Call<LoginResponse> login(String username, String password) {
+        //ignore username and password for stubbed response
         //set stubbed data into response object
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setAuthenticated(true);
@@ -70,7 +72,7 @@ public class MockGrammieGramService implements GrammieGramService {
      * @return - stubbed API GramsListResponse object
      */
     @Override
-    public Call<GramsListResponse> getGrams() { //TODO: does this take the login token?? what to do about headers??
+    public Call<GramsListResponse> getGrams() { //TODO should api calls include the login token??
         //create a stubbed instance of api response
         Gram gram = new Gram();
         gram.setSenderFirstName("sender");
@@ -93,12 +95,12 @@ public class MockGrammieGramService implements GrammieGramService {
      * @return - stubbed API SettingsResponse object
      */
     @Override
-    public Call<SettingsResponse> updateSettings(boolean audioNotification, boolean profanityFilter, int fontSize) {
+    public Call<SettingsResponse> updateSettings(int fontSize, boolean audioNotification, boolean profanityFilter) {
         //set stubbed data into response object
         SettingsResponse settingsResponse =  new SettingsResponse();
         settingsResponse.setUpdated(true);
 
-        return this.delegate.returningResponse(settingsResponse).updateSettings(audioNotification, profanityFilter, fontSize);
+        return this.delegate.returningResponse(settingsResponse).updateSettings(fontSize, audioNotification, profanityFilter);
     }
 
     /*

@@ -8,7 +8,6 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 
     <!-- remove default title bar so we can add custom tool bar -->
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/app_launcher_logo"
@@ -16,7 +15,11 @@
         android:roundIcon="@mipmap/app_launcher_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.BoardListActivity"></activity>
+        <activity android:name=".activities.BoardListActivity" />
+        <activity
+            android:name=".activities.BoardActivity"
+            android:label="@string/title_activity_board"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

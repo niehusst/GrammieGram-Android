@@ -23,6 +23,7 @@ import org.mockito.Mockito;
 import androidx.test.espresso.intent.rule.IntentsTestRule;
 
 import com.android.dex.util.FileUtils;
+import com.grammiegram.grammiegram_android.activities.BoardActivity;
 import com.grammiegram.grammiegram_android.activities.BoardListActivity;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
@@ -145,7 +146,7 @@ public class BoardListActivityTest {
         rule.launchActivity(new Intent());
 
         // find button
-        ViewInteraction btn = onView(withId(R.id.settings_button)).check(isDisplayed());
+        ViewInteraction btn = onView(withId(R.id.settings_button)).check(matches(isDisplayed()));
 
         // clicking button launches SettingsFragment
         btn.perform(click());
@@ -164,7 +165,7 @@ public class BoardListActivityTest {
         rule.launchActivity(new Intent());
 
         // find button
-        ViewInteraction btn = onView(withId(R.id.logout_button)).check(isDisplayed());
+        ViewInteraction btn = onView(withId(R.id.logout_button)).check(matches(isDisplayed()));
 
         // clicking button launches LoginActivity
         btn.perform(click());
@@ -190,14 +191,7 @@ public class BoardListActivityTest {
         rule.launchActivity(new Intent());
 
         // check it is displayed
-        onView(withId(R.id.progress_dialogue)).check(isDisplayed());
-
-        // check correct TextView string is displayed with it
-        onView(withId(R.id.loading_text)).check(isDisplayed());
-
-        String loadText = getApplicationContext().getResources().   //get str resource from file
-                getString(R.string.loading_text);                    //get text name
-        onView(withText(loadText)).check(matches(isDisplayed()));
+        onView(withId(R.id.progress_dialogue)).check(matches(isDisplayed()));
     }
 
     /**
@@ -221,7 +215,7 @@ public class BoardListActivityTest {
         onView(withId(R.id.error_image)).check(matches(isDisplayed()));
 
         // check text view with correct string is displayed
-        onView(withId(R.id.error_text)).check(isDisplayed());
+        onView(withId(R.id.error_text)).check(matches(isDisplayed()));
 
         String errText = getApplicationContext().getResources().   //get str resource from file
                 getString(R.string.wifi_error);                    //get text name
@@ -258,7 +252,7 @@ public class BoardListActivityTest {
         onView(withId(R.id.error_image)).check(matches(isDisplayed()));
 
         // check text view with correct string is displayed
-        onView(withId(R.id.error_text)).check(isDisplayed());
+        onView(withId(R.id.error_text)).check(matches(isDisplayed()));
 
         String errText = getApplicationContext().getResources().   //get str resource from file
                 getString(R.string.server_error);                  //get text name

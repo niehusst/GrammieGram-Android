@@ -23,6 +23,7 @@ import org.mockito.Mockito;
 import androidx.test.espresso.intent.rule.IntentsTestRule;
 
 import com.android.dex.util.FileUtils;
+import com.grammiegram.grammiegram_android.activities.BoardListActivity;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 

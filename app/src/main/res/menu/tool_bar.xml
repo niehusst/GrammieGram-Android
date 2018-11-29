@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/settings_button"
+        android:icon="@drawable/ic_baseline_settings_20px"
+        android:title="@string/settings_menu"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/logout_button"
+        android:title="@string/logout_menu"
+        app:showAsAction="ifRoom"/> <!-- add icon? -->
+
+</menu>

@@ -1,8 +1,12 @@
 <resources>
     <string name="app_name">GrammieGram</string>
     <string name="base_url">https://grammiegram.com/api/</string>
-    <string name="rv_example_text">Example Board</string>
+    <string name="rv_example_text">First Last</string>
+    <string name="rv_item_explination">View Board for:</string>
     <string name="loading_text">Fetching Data &#8230;</string>
     <string name="wifi_error">WiFi Not Found</string>
     <string name="server_error">We are having difficulty fetching data at the moment.\nPlease try again later.</string>
+    <string name="settings_menu">Settings</string>
+    <string name="logout_menu">Log Out</string>
+    <string name="retry_btn">Retry</string>
 </resources>

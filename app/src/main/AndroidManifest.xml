@@ -7,7 +7,10 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 
-    <!-- remove default title bar so we can add custom tool bar -->
+    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" /> <!-- remove default title bar so we can add custom tool bar -->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/app_launcher_logo"
@@ -19,7 +22,10 @@
         <activity
             android:name=".activities.BoardActivity"
             android:label="@string/title_activity_board"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".activities.LoginActivity"
+            android:label="@string/title_activity_login"></activity>
     </application>
 
 </manifest>

@@ -1,6 +1,7 @@
 package com.grammiegram.grammiegram_android;
 
 import com.grammiegram.grammiegram_android.POJO.BoardListResponse;
+import com.grammiegram.grammiegram_android.POJO.CheckNewResponse;
 import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
 import com.grammiegram.grammiegram_android.POJO.LoginResponse;
 import com.grammiegram.grammiegram_android.POJO.SettingsResponse;
@@ -69,6 +70,9 @@ public class GrammieGramService {
 
     /**
      * Handling of the API response when login is called
+     *
+     * @param username - username to login to the database with for an existing account
+     * @param password - password to login to the database with for an existing account
      */
     public void login(String username, String password) {
         //get the api call object
@@ -99,10 +103,12 @@ public class GrammieGramService {
 
     /**
      * Handling of the API response when getGrams is called
+     *
+     * @param boardDisplayName - the board to get grams for
      */
-    public void getGrams() {
+    public void getGrams(String boardDisplayName) {
         //get the api call object
-        Call<GramsListResponse> call = api.getGrams();
+        Call<GramsListResponse> call = api.getGrams(boardDisplayName);
 
         //execute asynchronously to avoid hogging UI thread
         call.enqueue(new Callback<GramsListResponse>() {
@@ -129,6 +135,10 @@ public class GrammieGramService {
 
     /**
      * Handling of the API response when updateSettings is called
+     *
+     * @param fontSize - size of the text to display on board in pt units
+     * @param audioNotification - whether or not to have active audio notifications
+     * @param profanityFilter - whether or not to filter profanity
      */
     public void updateSettings(int fontSize, boolean audioNotification, boolean profanityFilter) {
         //get the api call object
@@ -151,6 +161,33 @@ public class GrammieGramService {
 
             @Override
             public void onFailure(Call<SettingsResponse> call, Throwable t) {
+                //network error, unable to connect with the server for any reason
+                callBack.onNetworkError(t.toString());
+            }
+        });
+    }
+
+    public void checkNewGrams(String boardDisplayName) {
+        //get the api call object
+        Call<CheckNewResponse> call = api.checkNewGrams(boardDisplayName);
+
+        //execute asynchronously to avoid hogging UI thread
+        call.enqueue(new Callback<CheckNewResponse>() {
+
+            @Override
+            public void onResponse(Call<CheckNewResponse> call, Response<CheckNewResponse> response) {
+                //handle api response
+                if (response.isSuccessful()) {
+                    callBack.onSuccess(response.body()); //TODO: special board activity callback interface that has a success check new method
+                } else {
+                    callBack.onServerError(response.code(), response.errorBody());
+                    // must close response to avoid memory leaks
+                    response.errorBody().close();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CheckNewResponse> call, Throwable t) {
                 //network error, unable to connect with the server for any reason
                 callBack.onNetworkError(t.toString());
             }

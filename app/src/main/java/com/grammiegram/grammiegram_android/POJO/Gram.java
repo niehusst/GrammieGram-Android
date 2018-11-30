@@ -13,6 +13,38 @@ public class Gram {
     @Expose
     private String message;
 
+    @SerializedName("till")
+    @Expose
+    private String till;
+
+    @SerializedName("year")
+    @Expose
+    private Integer year;
+
+    @SerializedName("month")
+    @Expose
+    private Integer month;
+
+    @SerializedName("day")
+    @Expose
+    private Integer day;
+
+    @SerializedName("hour")
+    @Expose
+    private Integer hour;
+
+    @SerializedName("minute")
+    @Expose
+    private Integer minute;
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     public String getSenderFirstName() {
         return senderFirstName;
     }
@@ -21,11 +53,51 @@ public class Gram {
         this.senderFirstName = senderFirstName;
     }
 
-    public String getMessage() {
-        return message;
+    public String getTill() {
+        return till;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setTill(String till) {
+        this.till = till;
+    }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(Integer year) {
+        this.year = year;
+    }
+
+    public Integer getMonth() {
+        return month;
+    }
+
+    public void setMonth(Integer month) {
+        this.month = month;
+    }
+
+    public Integer getDay() {
+        return day;
+    }
+
+    public void setDay(Integer day) {
+        this.day = day;
+    }
+
+    public Integer getHour() {
+        return hour;
+    }
+
+    public void setHour(Integer hour) {
+        this.hour = hour;
+    }
+
+    public Integer getMinute() {
+        return minute;
+    }
+
+    public void setMinute(Integer minute) {
+        this.minute = minute;
     }
 }

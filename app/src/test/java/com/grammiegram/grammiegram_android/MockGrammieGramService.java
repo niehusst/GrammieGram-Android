@@ -2,6 +2,7 @@ package com.grammiegram.grammiegram_android;
 
 import com.grammiegram.grammiegram_android.POJO.Board;
 import com.grammiegram.grammiegram_android.POJO.BoardListResponse;
+import com.grammiegram.grammiegram_android.POJO.CheckNewResponse;
 import com.grammiegram.grammiegram_android.POJO.Gram;
 import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
 import com.grammiegram.grammiegram_android.POJO.LoginResponse;
@@ -24,7 +25,7 @@ public class MockGrammieGramService implements GrammieGramAPI {
      * Construct the class from a mockRetrofit object
      * @param service
      */
-    public MockGrammieGramService(BehaviorDelegate<GrammieGramAPI> service) {
+    MockGrammieGramService(BehaviorDelegate<GrammieGramAPI> service) {
         this.delegate = service;
     }
 
@@ -69,14 +70,22 @@ public class MockGrammieGramService implements GrammieGramAPI {
 
     /**
      * Stubbed API list grams retrofit response
+     *
+     * @param boardDisplayName - diplay name of the board to get grams for
      * @return - stubbed API GramsListResponse object
      */
     @Override
-    public Call<GramsListResponse> getGrams() { //TODO should api calls include the login token??
+    public Call<GramsListResponse> getGrams(String boardDisplayName) {
         //create a stubbed instance of api response
         Gram gram = new Gram();
         gram.setSenderFirstName("sender");
         gram.setMessage("Hello World");
+        gram.setDay(2);
+        gram.setHour(3);
+        gram.setMinute(30);
+        gram.setMonth(1);
+        gram.setYear(2000);
+        gram.setTill("2018-11-30 05:49:00+00:00");
 
         ArrayList<Gram> gramList = new ArrayList<>();
         gramList.add(gram);
@@ -87,11 +96,12 @@ public class MockGrammieGramService implements GrammieGramAPI {
         grams.setGrams(gramList);
         grams.setBoardFirstName("Grammie");
 
-        return this.delegate.returningResponse(grams).getGrams();
+        return this.delegate.returningResponse(grams).getGrams(boardDisplayName);
     }
 
     /**
      * Stubbed API settingsUpdate retrofit response
+     *
      * @return - stubbed API SettingsResponse object
      */
     @Override
@@ -101,6 +111,35 @@ public class MockGrammieGramService implements GrammieGramAPI {
         settingsResponse.setUpdated(true);
 
         return this.delegate.returningResponse(settingsResponse).updateSettings(fontSize, audioNotification, profanityFilter);
+    }
+
+    /**
+     * Stubbed API checkNewGrams retrofit response
+     *
+     * @param boardDisplayName - display name of the board to check for new grams from
+     * @return - A Call for a stubbed response object
+     */
+    @Override
+    public Call<CheckNewResponse> checkNewGrams(String boardDisplayName) {
+        //stub response
+        Gram gram = new Gram();
+        gram.setDay(1);
+        gram.setHour(12);
+        gram.setMessage("Test Message");
+        gram.setMinute(0);
+        gram.setMonth(12);
+        gram.setSenderFirstName("Sender");
+        gram.setTill("2018-11-30 05:49:00+00:00");
+        gram.setYear(2018);
+
+        ArrayList<Gram> gramsList = new ArrayList<>();
+        gramsList.add(gram);
+
+        CheckNewResponse response = new CheckNewResponse();
+        response.setNeeded(true);
+        response.setNewGrams(gramsList);
+
+        return this.delegate.returningResponse(response).checkNewGrams(boardDisplayName);
     }
 
     /*

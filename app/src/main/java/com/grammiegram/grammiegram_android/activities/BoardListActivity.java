@@ -19,6 +19,7 @@ import com.grammiegram.grammiegram_android.GrammieGramService;
 import com.grammiegram.grammiegram_android.POJO.BoardListResponse;
 import com.grammiegram.grammiegram_android.R;
 import com.grammiegram.grammiegram_android.adapters.BoardListRecyclerAdapter;
+import com.grammiegram.grammiegram_android.fragments.SettingsFragment;
 import com.grammiegram.grammiegram_android.interfaces.APIResponse;
 import com.grammiegram.grammiegram_android.interfaces.CallBack;
 
@@ -32,21 +33,21 @@ public class BoardListActivity extends AppCompatActivity implements CallBack {
 
     //success views
     @BindView(R.id.board_recycler)
-    private RecyclerView recyclerView;
+    public RecyclerView recyclerView;
     @BindView(R.id.toolbar)
-    private Toolbar toolbar;
+    public Toolbar toolbar;
 
     //loading views
     @BindView(R.id.progress_dialogue)
-    private ProgressBar dialogue;
+    public ProgressBar dialogue;
 
     //err views
     @BindView(R.id.error_text)
-    private TextView errText;
+    public TextView errText;
     @BindView(R.id.error_image)
-    private ImageView errImg;
+    public ImageView errImg;
     @BindView(R.id.retry_button)
-    private Button errRetryBtn;
+    public Button errRetryBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

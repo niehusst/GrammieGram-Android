@@ -3,6 +3,7 @@ package com.grammiegram.grammiegram_android;
 import android.util.Log;
 
 import com.grammiegram.grammiegram_android.POJO.BoardListResponse;
+import com.grammiegram.grammiegram_android.POJO.CheckNewResponse;
 import com.grammiegram.grammiegram_android.POJO.ErrorResponse;
 import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
 import com.grammiegram.grammiegram_android.POJO.LoginResponse;
@@ -78,7 +79,7 @@ public class MockGrammieGramServiceError implements GrammieGramAPI {
      * @return - stubbed API GramsListResponse object
      */
     @Override
-    public Call<GramsListResponse> getGrams() { //TODO: does this take the login token??
+    public Call<GramsListResponse> getGrams(String boardDisplayNames) { //TODO: does this take the login token??
         //create a stubbed instance of api response
         //set up error response
         ErrorResponse error = new ErrorResponse();
@@ -89,7 +90,7 @@ public class MockGrammieGramServiceError implements GrammieGramAPI {
         try {
             //server error getting grams
             Response response = Response.error(500, ResponseBody.create(MediaType.parse("application/json") ,json));
-            return this.delegate.returning(Calls.response(response)).getGrams();
+            return this.delegate.returning(Calls.response(response)).getGrams(boardDisplayNames);
         } catch (Exception e) {
             Log.e(TAG, "JSON Processing exception:",e);
             return Calls.failure(e);
@@ -112,6 +113,30 @@ public class MockGrammieGramServiceError implements GrammieGramAPI {
             //server error setting new data in database
             Response response = Response.error(500, ResponseBody.create(MediaType.parse("application/json") ,json));
             return this.delegate.returning(Calls.response(response)).updateSettings(fontSize, audioNotification, profanityFilter);
+        } catch (Exception e) {
+            Log.e(TAG, "JSON Processing exception:",e);
+            return Calls.failure(e);
+        }
+    }
+
+    /**
+     * Stubbed API settingsUpdate retrofit response
+     *
+     * @param boardDisplayName - the display name of the board to check new grams for
+     * @return - stubbed API SettingsResponse object
+     */
+    @Override
+    public Call<CheckNewResponse> checkNewGrams(String boardDisplayName) {
+        //set stubbed data into response object
+        ErrorResponse error = new ErrorResponse();
+
+        error.setError("ServerError");
+
+        String json = error.convertToJson();
+        try {
+            //server error setting new data in database
+            Response response = Response.error(500, ResponseBody.create(MediaType.parse("application/json") ,json));
+            return this.delegate.returning(Calls.response(response)).checkNewGrams(boardDisplayName);
         } catch (Exception e) {
             Log.e(TAG, "JSON Processing exception:",e);
             return Calls.failure(e);

@@ -1,6 +1,7 @@
 package com.grammiegram.grammiegram_android.interfaces;
 
 import com.grammiegram.grammiegram_android.POJO.BoardListResponse;
+import com.grammiegram.grammiegram_android.POJO.CheckNewResponse;
 import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
 import com.grammiegram.grammiegram_android.POJO.LoginResponse;
 import com.grammiegram.grammiegram_android.POJO.SettingsResponse;
@@ -21,5 +22,12 @@ public interface GrammieGramAPI {
     Call<LoginResponse> login(String username, String password);
 
     @POST("list_grams")
-    Call<GramsListResponse> getGrams();
+    Call<GramsListResponse> getGrams(String boardDisplayName);
+
+    @POST("check_new_add")
+    Call<CheckNewResponse> checkNewGrams(String boardDisplayName);
+
+    /*
+    make board, send gram, get contacts
+     */
 }

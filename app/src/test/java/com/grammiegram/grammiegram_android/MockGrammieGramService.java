@@ -31,10 +31,11 @@ public class MockGrammieGramService implements GrammieGramAPI {
 
     /**
      * Stubbed API BoardList retrofit response
+     * @param auth - auth token
      * @return - stubbed API BoardListResponse object
      */
     @Override
-    public Call<BoardListResponse> getBoards() {
+    public Call<BoardListResponse> getBoards(String auth) {
         //create a stubbed instance of api response
         Board board = new Board();
         board.setBoardFirstName("Grammie");
@@ -50,11 +51,13 @@ public class MockGrammieGramService implements GrammieGramAPI {
         response.setFirstName("Gram");
         response.setBoardList(boardList);
 
-        return this.delegate.returningResponse(response).getBoards();
+        return this.delegate.returningResponse(response).getBoards(auth);
     }
 
     /**
      * Stubbed API login retrofit response
+     * @param username
+     * @param password
      * @return - stubbed API LoginResponse object
      */
     @Override
@@ -70,12 +73,12 @@ public class MockGrammieGramService implements GrammieGramAPI {
 
     /**
      * Stubbed API list grams retrofit response
-     *
+     * @param auth - login token
      * @param boardDisplayName - diplay name of the board to get grams for
      * @return - stubbed API GramsListResponse object
      */
     @Override
-    public Call<GramsListResponse> getGrams(String boardDisplayName) {
+    public Call<GramsListResponse> getGrams(String auth, String boardDisplayName) {
         //create a stubbed instance of api response
         Gram gram = new Gram();
         gram.setSenderFirstName("sender");
@@ -96,31 +99,34 @@ public class MockGrammieGramService implements GrammieGramAPI {
         grams.setGrams(gramList);
         grams.setBoardFirstName("Grammie");
 
-        return this.delegate.returningResponse(grams).getGrams(boardDisplayName);
+        return this.delegate.returningResponse(grams).getGrams(auth, boardDisplayName);
     }
 
     /**
      * Stubbed API settingsUpdate retrofit response
-     *
+     * @param auth - login token
+     * @param fontSize
+     * @param audioNotification
+     * @param profanityFilter
      * @return - stubbed API SettingsResponse object
      */
     @Override
-    public Call<SettingsResponse> updateSettings(int fontSize, boolean audioNotification, boolean profanityFilter) {
+    public Call<SettingsResponse> updateSettings(String auth, int fontSize, boolean audioNotification, boolean profanityFilter) {
         //set stubbed data into response object
         SettingsResponse settingsResponse =  new SettingsResponse();
         settingsResponse.setUpdated(true);
 
-        return this.delegate.returningResponse(settingsResponse).updateSettings(fontSize, audioNotification, profanityFilter);
+        return this.delegate.returningResponse(settingsResponse).updateSettings(auth, fontSize, audioNotification, profanityFilter);
     }
 
     /**
      * Stubbed API checkNewGrams retrofit response
-     *
+     * @param auth - login token
      * @param boardDisplayName - display name of the board to check for new grams from
      * @return - A Call for a stubbed response object
      */
     @Override
-    public Call<CheckNewResponse> checkNewGrams(String boardDisplayName) {
+    public Call<CheckNewResponse> checkNewGrams(String auth, String boardDisplayName) {
         //stub response
         Gram gram = new Gram();
         gram.setDay(1);
@@ -139,7 +145,7 @@ public class MockGrammieGramService implements GrammieGramAPI {
         response.setNeeded(true);
         response.setNewGrams(gramsList);
 
-        return this.delegate.returningResponse(response).checkNewGrams(boardDisplayName);
+        return this.delegate.returningResponse(response).checkNewGrams(auth, boardDisplayName);
     }
 
     /*

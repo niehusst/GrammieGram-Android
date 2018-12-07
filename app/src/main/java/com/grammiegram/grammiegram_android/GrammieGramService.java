@@ -40,10 +40,12 @@ public class GrammieGramService {
 
     /**
      * Handling of the API response when getBoards is called
+     *
+     * @param auth - the authentication token
      */
-    public void getBoards() {
+    public void getBoards(String auth) {
         //get the api call object
-        Call<BoardListResponse> call = api.getBoards();
+        Call<BoardListResponse> call = api.getBoards(auth);
 
         //execute asynchronously to avoid hogging UI thread
         call.enqueue(new Callback<BoardListResponse>() {
@@ -104,11 +106,12 @@ public class GrammieGramService {
     /**
      * Handling of the API response when getGrams is called
      *
+     * @param auth - the authentication token for logged in user
      * @param boardDisplayName - the board to get grams for
      */
-    public void getGrams(String boardDisplayName) {
+    public void getGrams(String auth, String boardDisplayName) {
         //get the api call object
-        Call<GramsListResponse> call = api.getGrams(boardDisplayName);
+        Call<GramsListResponse> call = api.getGrams(auth, boardDisplayName);
 
         //execute asynchronously to avoid hogging UI thread
         call.enqueue(new Callback<GramsListResponse>() {
@@ -136,13 +139,14 @@ public class GrammieGramService {
     /**
      * Handling of the API response when updateSettings is called
      *
+     * @param auth - the authentication token for the logged in user
      * @param fontSize - size of the text to display on board in pt units
      * @param audioNotification - whether or not to have active audio notifications
      * @param profanityFilter - whether or not to filter profanity
      */
-    public void updateSettings(int fontSize, boolean audioNotification, boolean profanityFilter) {
+    public void updateSettings(String auth, int fontSize, boolean audioNotification, boolean profanityFilter) {
         //get the api call object
-        Call<SettingsResponse> call = api.updateSettings(fontSize, audioNotification, profanityFilter);
+        Call<SettingsResponse> call = api.updateSettings(auth, fontSize, audioNotification, profanityFilter);
 
         //execute asynchronously to avoid hogging UI thread
         call.enqueue(new Callback<SettingsResponse>() {
@@ -167,9 +171,15 @@ public class GrammieGramService {
         });
     }
 
-    public void checkNewGrams(String boardDisplayName) {
+    /**
+     * Check if the board needs to update the grams it is displaying
+     *
+     * @param auth - the authentication token for the logged in user
+     * @param boardDisplayName - display name of the board to check grams for
+     */
+    public void checkNewGrams(String auth, String boardDisplayName) {
         //get the api call object
-        Call<CheckNewResponse> call = api.checkNewGrams(boardDisplayName);
+        Call<CheckNewResponse> call = api.checkNewGrams(auth, boardDisplayName);
 
         //execute asynchronously to avoid hogging UI thread
         call.enqueue(new Callback<CheckNewResponse>() {

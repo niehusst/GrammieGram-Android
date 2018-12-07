@@ -65,7 +65,7 @@ public class RetrofitAPITest {
         GrammieGramAPI mockAPI = new MockGrammieGramService(delegate);
 
         //get and execute api call
-        Call<BoardListResponse> boardList = mockAPI.getBoards();
+        Call<BoardListResponse> boardList = mockAPI.getBoards("Token 123");
         Response<BoardListResponse> response = boardList.execute();
 
         //assert response has expected data
@@ -84,7 +84,7 @@ public class RetrofitAPITest {
         GrammieGramAPI mockAPI = new MockGrammieGramServiceError(delegate);
 
         //get and execute api call
-        Call<BoardListResponse> boardList = mockAPI.getBoards();
+        Call<BoardListResponse> boardList = mockAPI.getBoards("Token 123");
         Response<BoardListResponse> response = boardList.execute();
 
         //assert response has expected data
@@ -142,7 +142,7 @@ public class RetrofitAPITest {
         GrammieGramAPI mockAPI = new MockGrammieGramService(delegate);
 
         //get and execute api call
-        Call<GramsListResponse> grams = mockAPI.getGrams("display");
+        Call<GramsListResponse> grams = mockAPI.getGrams("Token 123", "display");
         Response<GramsListResponse> response = grams.execute();
 
         //assert response has expected data
@@ -166,7 +166,7 @@ public class RetrofitAPITest {
         GrammieGramAPI mockAPI = new MockGrammieGramServiceError(delegate);
 
         //get and execute api call
-        Call<GramsListResponse> grams = mockAPI.getGrams("display");
+        Call<GramsListResponse> grams = mockAPI.getGrams("Token 123", "display");
         Response<GramsListResponse> response = grams.execute();
 
         //assert response has expected data
@@ -187,7 +187,7 @@ public class RetrofitAPITest {
         GrammieGramAPI mockAPI = new MockGrammieGramService(delegate);
 
         //get and execute api call
-        Call<SettingsResponse> update = mockAPI.updateSettings(12, true, true);
+        Call<SettingsResponse> update = mockAPI.updateSettings("Token 123", 12, true, true);
         Response<SettingsResponse> response = update.execute();
 
         //assert response has expected data
@@ -202,7 +202,7 @@ public class RetrofitAPITest {
         GrammieGramAPI mockAPI = new MockGrammieGramServiceError(delegate);
 
         //get and execute api call (for clarity, input has no effect on resulting stubbed outputs)
-        Call<SettingsResponse> update = mockAPI.updateSettings(999, false, false);
+        Call<SettingsResponse> update = mockAPI.updateSettings("Token 123", 999, false, false);
         Response<SettingsResponse> response = update.execute();
 
         //assert response has expected data
@@ -223,7 +223,7 @@ public class RetrofitAPITest {
         GrammieGramAPI mockAPI = new MockGrammieGramService(delegate);
 
         //get and execute api call
-        Call<CheckNewResponse> checkNew = mockAPI.checkNewGrams("display");
+        Call<CheckNewResponse> checkNew = mockAPI.checkNewGrams("Token 123", "display");
         Response<CheckNewResponse> response = checkNew.execute();
 
         //assert response has expected data
@@ -246,7 +246,7 @@ public class RetrofitAPITest {
         GrammieGramAPI mockAPI = new MockGrammieGramServiceError(delegate);
 
         //get and execute api call (for clarity, input has no effect on resulting stubbed outputs)
-        Call<CheckNewResponse> checkNew = mockAPI.checkNewGrams("gramPappy");
+        Call<CheckNewResponse> checkNew = mockAPI.checkNewGrams("Token 123", "gramPappy");
         Response<CheckNewResponse> response = checkNew.execute();
 
         //assert response has expected data

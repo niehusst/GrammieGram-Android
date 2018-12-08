@@ -34,6 +34,22 @@ public class SignInActivity extends AppCompatActivity implements CallBack {
             // Make the signup link clickable
             TextView no_account = (TextView) findViewById(R.id.no_account);
             no_account.setMovementMethod(LinkMovementMethod.getInstance());
+            // Make error text clear when going back to re-enter username/password
+            EditText username = (EditText) findViewById(R.id.username);
+            EditText password = (EditText) findViewById(R.id.password);
+            View.OnFocusChangeListener clrTxt = new ClearErrorText();
+            username.setOnFocusChangeListener(clrTxt);
+            password.setOnFocusChangeListener(clrTxt);
+        }
+    }
+
+    public class ClearErrorText implements View.OnFocusChangeListener {
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            TextView errorText = (TextView) findViewById(R.id.error);
+            String err = errorText.getText().toString();
+            if (hasFocus && !(err.equals(null) || err.equals(""))) {
+                errorText.setText("");}
         }
     }
 

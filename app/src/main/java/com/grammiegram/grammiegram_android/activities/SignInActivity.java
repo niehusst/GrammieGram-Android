@@ -14,12 +14,13 @@ import com.grammiegram.grammiegram_android.POJO.LoginResponse;
 import com.grammiegram.grammiegram_android.R;
 import com.grammiegram.grammiegram_android.interfaces.APIResponse;
 import com.grammiegram.grammiegram_android.interfaces.CallBack;
-import com.grammiegram.grammiegram_android.interfaces.LoginCallBack;
+
+import java.io.IOException;
 
 import okhttp3.ResponseBody;
 
 public class SignInActivity extends AppCompatActivity implements CallBack {
-    private GrammieGramService api;
+    private GrammieGramService api = new GrammieGramService(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,12 +28,12 @@ public class SignInActivity extends AppCompatActivity implements CallBack {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sign_in);
         // If we already have an authentication token, jump to the board list
-        if (!prefs.contains("Token")) {
+        if (prefs.contains("auth_token")) {
+            launchBoardListActivity();
+        } else {
             // Make the signup link clickable
             TextView no_account = (TextView) findViewById(R.id.no_account);
             no_account.setMovementMethod(LinkMovementMethod.getInstance());
-        } else {
-            launchBoardListActivity();
         }
     }
 
@@ -50,7 +51,7 @@ public class SignInActivity extends AppCompatActivity implements CallBack {
         LoginResponse login = (LoginResponse) response;
         if (login.getAuthenticated()) {
             String token = login.getToken();
-            prefs.edit().putString("auth_token", token);
+            prefs.edit().putString("auth_token", token).commit();
             launchBoardListActivity();
         } else {
             invalidCredentials();
@@ -67,7 +68,12 @@ public class SignInActivity extends AppCompatActivity implements CallBack {
     public void onServerError(int err, ResponseBody response)
     {
         TextView errorText = (TextView) findViewById(R.id.error);
-        errorText.setText("Server Error. Please try again!");
+        String error;
+        try {
+            error = response.string();
+        } catch (IOException e) {
+            error = e.toString(); }
+        errorText.setText(error);
     }
 
     public void invalidCredentials() {
@@ -76,9 +82,12 @@ public class SignInActivity extends AppCompatActivity implements CallBack {
     }
 
     public void launchBoardListActivity() {
-       Intent intent = new Intent(this, BoardListActivity.class);
-       startActivity(intent);
-       finish();
+        Intent intent = new Intent(this, BoardListActivity.class);
+        startActivity(intent);
+        finish();
+        // Uncomment below for testing purposes
+        /*TextView errorText = (TextView) findViewById(R.id.error);
+        errorText.setText("Launch BoardList!");*/
     }
 }
 

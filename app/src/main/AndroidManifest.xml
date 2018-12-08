@@ -13,7 +13,10 @@
         android:roundIcon="@mipmap/app_launcher_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.SignInActivity">
+        <activity
+            android:name=".activities.SignInActivity"
+            <!-- let it rotate -->
+            android:screenOrientation="sensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

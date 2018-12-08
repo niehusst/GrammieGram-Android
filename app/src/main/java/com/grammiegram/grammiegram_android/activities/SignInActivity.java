@@ -1,5 +1,6 @@
 package com.grammiegram.grammiegram_android.activities;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -19,14 +20,14 @@ import okhttp3.ResponseBody;
 
 public class SignInActivity extends AppCompatActivity implements CallBack {
     private GrammieGramService api;
-    private SharedPreferences prefs = getSharedPreferences("grammiegram", MODE_PRIVATE);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences prefs = getSharedPreferences("grammiegram", MODE_PRIVATE);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.sign_in);
         // If we already have an authentication token, jump to the board list
         if (prefs.contains("Token")) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.sign_in);
             // Make the signup link clickable
             TextView no_account = (TextView) findViewById(R.id.no_account);
             no_account.setMovementMethod(LinkMovementMethod.getInstance());
@@ -45,6 +46,7 @@ public class SignInActivity extends AppCompatActivity implements CallBack {
 
     @Override
     public void onSuccess(APIResponse response) {
+        SharedPreferences prefs = getSharedPreferences("grammiegram", MODE_PRIVATE);
         LoginResponse login = (LoginResponse) response;
         if (login.getAuthenticated()) {
             String token = login.getToken();
@@ -74,7 +76,9 @@ public class SignInActivity extends AppCompatActivity implements CallBack {
     }
 
     public void launchBoardListActivity() {
-        // launch board list activity
+       Intent intent = new Intent(this, BoardListActivity.class);
+       startActivity(intent);
+       finish();
     }
 }
 

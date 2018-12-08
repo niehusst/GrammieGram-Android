@@ -27,7 +27,7 @@ public class SignInActivity extends AppCompatActivity implements CallBack {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sign_in);
         // If we already have an authentication token, jump to the board list
-        if (prefs.contains("Token")) {
+        if (!prefs.contains("Token")) {
             // Make the signup link clickable
             TextView no_account = (TextView) findViewById(R.id.no_account);
             no_account.setMovementMethod(LinkMovementMethod.getInstance());

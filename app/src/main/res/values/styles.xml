@@ -8,4 +8,15 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!-- Error Text. -->
+    <style name="ErrorText" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">#FF0000</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <!-- Link Text. -->
+    <style name="LinkText" parent="TextAppearance.AppCompat">
+        <item name="android:textColorLink">#3595E2</item>
+        <item name="android:textSize">20sp</item>
+    </style>
 </resources>

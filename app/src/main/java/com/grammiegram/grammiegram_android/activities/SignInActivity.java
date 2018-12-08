@@ -57,17 +57,20 @@ public class SignInActivity extends AppCompatActivity implements CallBack {
 
     @Override
     public void onNetworkError(String err) {
-        // display error message about network error
+        TextView errorText = (TextView) findViewById(R.id.error);
+        errorText.setText(err);
     }
 
     @Override
     public void onServerError(int err, ResponseBody response)
     {
-        // display error message about server error
+        TextView errorText = (TextView) findViewById(R.id.error);
+        errorText.setText("Server Error. Please try again!");
     }
 
     public void invalidCredentials() {
-        // display error message about credentials error
+        TextView errorText = (TextView) findViewById(R.id.error);
+        errorText.setText("Invalid login. Please try again!");
     }
 
     public void launchBoardListActivity() {

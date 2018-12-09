@@ -105,18 +105,17 @@ public class MockGrammieGramService implements GrammieGramAPI {
     /**
      * Stubbed API settingsUpdate retrofit response
      * @param auth - login token
-     * @param fontSize
-     * @param audioNotification
-     * @param profanityFilter
+     * @param audioNotification - whether to make sounds for new grams
+     * @param profanityFilter - whether to strip profanity from grams
      * @return - stubbed API SettingsResponse object
      */
     @Override
-    public Call<SettingsResponse> updateSettings(String auth, int fontSize, boolean audioNotification, boolean profanityFilter) {
+    public Call<SettingsResponse> updateSettings(String auth, boolean audioNotification, boolean profanityFilter) {
         //set stubbed data into response object
         SettingsResponse settingsResponse =  new SettingsResponse();
         settingsResponse.setUpdated(true);
 
-        return this.delegate.returningResponse(settingsResponse).updateSettings(auth, fontSize, audioNotification, profanityFilter);
+        return this.delegate.returningResponse(settingsResponse).updateSettings(auth, audioNotification, profanityFilter);
     }
 
     /**

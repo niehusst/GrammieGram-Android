@@ -103,13 +103,12 @@ public class MockGrammieGramServiceError implements GrammieGramAPI {
     /**
      * Stubbed API settingsUpdate retrofit response
      * @param auth - login token
-     * @param fontSize - text size to display on board
      * @param audioNotification - whether to make sound when message arrives
-     * @param profanityFilter
+     * @param profanityFilter - whether to strip bad words from grams
      * @return - stubbed API SettingsResponse object
      */
     @Override
-    public Call<SettingsResponse> updateSettings(String auth, int fontSize, boolean audioNotification, boolean profanityFilter) {
+    public Call<SettingsResponse> updateSettings(String auth, boolean audioNotification, boolean profanityFilter) {
         //set stubbed data into response object
         ErrorResponse error = new ErrorResponse();
 
@@ -119,7 +118,7 @@ public class MockGrammieGramServiceError implements GrammieGramAPI {
         try {
             //server error setting new data in database
             Response response = Response.error(500, ResponseBody.create(MediaType.parse("application/json") ,json));
-            return this.delegate.returning(Calls.response(response)).updateSettings(auth, fontSize, audioNotification, profanityFilter);
+            return this.delegate.returning(Calls.response(response)).updateSettings(auth, audioNotification, profanityFilter);
         } catch (Exception e) {
             Log.e(TAG, "JSON Processing exception:",e);
             return Calls.failure(e);

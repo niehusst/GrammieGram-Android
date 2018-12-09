@@ -140,13 +140,12 @@ public class GrammieGramService {
      * Handling of the API response when updateSettings is called
      *
      * @param auth - the authentication token for the logged in user
-     * @param fontSize - size of the text to display on board in pt units
      * @param audioNotification - whether or not to have active audio notifications
      * @param profanityFilter - whether or not to filter profanity
      */
-    public void updateSettings(String auth, int fontSize, boolean audioNotification, boolean profanityFilter) {
+    public void updateSettings(String auth, boolean audioNotification, boolean profanityFilter) {
         //get the api call object
-        Call<SettingsResponse> call = api.updateSettings(auth, fontSize, audioNotification, profanityFilter);
+        Call<SettingsResponse> call = api.updateSettings(auth, audioNotification, profanityFilter);
 
         //execute asynchronously to avoid hogging UI thread
         call.enqueue(new Callback<SettingsResponse>() {
@@ -188,7 +187,7 @@ public class GrammieGramService {
             public void onResponse(Call<CheckNewResponse> call, Response<CheckNewResponse> response) {
                 //handle api response
                 if (response.isSuccessful()) {
-                    callBack.onSuccess(response.body()); //TODO: special board activity callback interface that has a success check new method
+                    callBack.onSuccess(response.body());
                 } else {
                     callBack.onServerError(response.code(), response.errorBody());
                     // must close response to avoid memory leaks

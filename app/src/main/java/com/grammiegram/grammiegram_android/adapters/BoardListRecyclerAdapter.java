@@ -91,8 +91,14 @@ public class BoardListRecyclerAdapter extends RecyclerView.Adapter<BoardListRecy
         @Override
         public void onClick(View view) {
             Intent intent = new Intent(mContext, BoardActivity.class);
+
+            //add board data to intent
+            Board board = getItem(this.getLayoutPosition());
+            intent.putExtra("BOARD", board);
+
             //stand in for finishing activity
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
             mContext.startActivity(intent);
         }
     }

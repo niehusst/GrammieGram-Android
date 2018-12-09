@@ -6,6 +6,8 @@ import com.grammiegram.grammiegram_android.POJO.LoginResponse;
 import com.grammiegram.grammiegram_android.POJO.SettingsResponse;
 
 import retrofit2.Call;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 
@@ -17,8 +19,9 @@ public interface GrammieGramAPI {
     @POST("update_settings")
     Call<SettingsResponse> updateSettings(int fontSize, boolean audioNotifications, boolean profanityFilter);
 
-    @POST("login")
-    Call<LoginResponse> login(String username, String password);
+    @FormUrlEncoded
+    @POST("login/")
+    Call<LoginResponse> login(@Field("username") String username, @Field("password") String password);
 
     @POST("list_grams")
     Call<GramsListResponse> getGrams();

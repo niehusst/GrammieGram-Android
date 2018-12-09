@@ -1,14 +1,21 @@
 package com.grammiegram.grammiegram_android.activities;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -25,9 +32,10 @@ import com.grammiegram.grammiegram_android.interfaces.CallBack;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import okhttp3.ResponseBody;
 
-public class BoardListActivity extends AppCompatActivity implements CallBack {
+public class BoardListActivity extends AppCompatActivity implements CallBack, SettingsFragment.OnFragmentInteractionListener {
 
     private GrammieGramService api;
 
@@ -37,7 +45,7 @@ public class BoardListActivity extends AppCompatActivity implements CallBack {
     @BindView(R.id.toolbar)
     public Toolbar toolbar;
 
-    //loading views
+    //loading progress views
     @BindView(R.id.progress_dialogue)
     public ProgressBar dialogue;
 
@@ -48,6 +56,10 @@ public class BoardListActivity extends AppCompatActivity implements CallBack {
     public ImageView errImg;
     @BindView(R.id.retry_button)
     public Button errRetryBtn;
+
+    //fragment container
+    @BindView(R.id.board_list_container)
+    public FrameLayout settingsFrag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,9 +79,8 @@ public class BoardListActivity extends AppCompatActivity implements CallBack {
         recyclerView.addItemDecoration(new DividerItemDecoration(BoardListActivity.this,
                 DividerItemDecoration.VERTICAL));
 
-
-        //define onclick listeners
-
+        //load up boards into recycler view
+        getBoards();
     }
 
     /**
@@ -111,13 +122,46 @@ public class BoardListActivity extends AppCompatActivity implements CallBack {
         }
     }
 
+    /**
+     * When errRetryBtn is clicked, retry the getBoards API call
+     */
+    @OnClick(R.id.retry_button)
+    public void onClickRetry() {
+        //start spinner and make err views disappear
+        dialogue.setVisibility(View.VISIBLE);
+        errRetryBtn.setVisibility(View.GONE);
+        errImg.setVisibility(View.GONE);
+        errText.setVisibility(View.GONE);
+
+        //retry api call for boards
+        getBoards();
+    }
+
+    /**
+     * Define behavior when back button is pressed
+     */
+    @Override
+    public void onBackPressed() {
+        if(settingsFrag.getVisibility() == View.VISIBLE) {
+            settingsFrag.setVisibility(View.GONE);
+
+        } else {
+            BoardListActivity.super.onBackPressed();
+        }
+    }
 
     /**
      * Launches the board activity of the selected board item from recycler view
      */
     private void launchLoginActivity() {
+        // delete saved token data from preferences
+        getSharedPreferences("grammiegram", MODE_PRIVATE)
+                .edit()
+                .remove("auth_token")
+                .apply();
+
+        //launch login activity with empty intent
         Intent intent = new Intent(this, LoginActivity.class);
-        //TODO: delete saved data from preferences?
         startActivity(intent);
         finish();
     }
@@ -126,8 +170,13 @@ public class BoardListActivity extends AppCompatActivity implements CallBack {
      * Launches the board activity of the selected board item from recycler view
      */
     private void launchSettingsFragment() {
-        Intent intent = new Intent(this, SettingsFragment.class);
-        startActivity(intent);
+        settingsFrag.setVisibility(View.VISIBLE);
+        FragmentManager manager = getFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+
+        transaction.replace(R.id.board_list_container, new SettingsFragment()); //TODO: this is wrong??
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 
     /**
@@ -137,8 +186,10 @@ public class BoardListActivity extends AppCompatActivity implements CallBack {
         //start progress dialogue at start of loading sequence
         dialogue.setVisibility(View.VISIBLE);
 
-        //api call (handling goes to overridden on___ methods)
-        api.getBoards();
+        //api call (handling goes to callback interface methods)
+        SharedPreferences sharedPreferences = getSharedPreferences("grammiegram", Context.MODE_PRIVATE);
+        String token = "";//sharedPreferences.getString(R.string.auth_token); //TODO: re-enable this
+        api.getBoards("Token " + token);
 
         //finished loading, make dialogue invisible again
         dialogue.setVisibility(View.GONE);
@@ -150,6 +201,8 @@ public class BoardListActivity extends AppCompatActivity implements CallBack {
      */
     @Override
     public void onSuccess(APIResponse response) {
+        recyclerView.setVisibility(View.VISIBLE);
+        settingsFrag.setVisibility(View.GONE);
         BoardListResponse bl = (BoardListResponse) response;
 
         //set response data into the adapter
@@ -169,11 +222,13 @@ public class BoardListActivity extends AppCompatActivity implements CallBack {
         errImg.setVisibility(View.VISIBLE);
         errText.setVisibility(View.VISIBLE);
         errRetryBtn.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
+        settingsFrag.setVisibility(View.GONE);
 
         errText.setText(R.string.wifi_error);
 
         //make toast
-        Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, error, Toast.LENGTH_SHORT).show(); //TODO: change msg to "Network Error"
     }
 
     /**
@@ -187,10 +242,18 @@ public class BoardListActivity extends AppCompatActivity implements CallBack {
         errImg.setVisibility(View.VISIBLE);
         errText.setVisibility(View.VISIBLE);
         errRetryBtn.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
+        settingsFrag.setVisibility(View.GONE);
 
         errText.setText(R.string.server_error);
 
         //make toast
         Toast.makeText(this, code + " Server Error", Toast.LENGTH_SHORT).show();
+    }
+
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        //required by Fragment class parent activity
     }
 }

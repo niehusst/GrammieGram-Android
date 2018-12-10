@@ -17,7 +17,7 @@ public class BoardListResponse implements APIResponse {
 
     @SerializedName("board_list")
     @Expose
-    private List<Board> boardList = null;
+    private BoardList boardList = null;
 
     public String getUsername() {
         return username;

@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">GrammieGram</string>
     <string name="base_url">https://grammiegram.com/api/</string>
+    <string name="auth_token">auth_token</string>
+
+    <!-- BoardListActivity strings -->
     <string name="rv_example_text">First Last</string>
     <string name="rv_item_explination">View Board for:</string>
     <string name="loading_text">Fetching Data &#8230;</string>

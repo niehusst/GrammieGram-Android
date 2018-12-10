@@ -2,6 +2,7 @@ package com.grammiegram.grammiegram_android.activities;
 
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -18,19 +19,16 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
+import com.grammiegram.grammiegram_android.POJO.Board;
 import com.grammiegram.grammiegram_android.R;
 
-public class BoardActivity extends AppCompatActivity {
+public class BoardActivity extends AppCompatActivity { //TODO: make set landscape rotation and prevent falling asleep
 
     /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
+     * The {@link android.support.v4.app.FragmentStatePagerAdapter} that will provide
+     * fragments for each of the sections that hold grams.
      */
-    private SectionsPagerAdapter mSectionsPagerAdapter;
+    private FragmentStatePagerAdapter pagerAdapter;
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -44,13 +42,29 @@ public class BoardActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //Get board data to load from intent
+        Board board = (Board) getIntent().getParcelableExtra("BOARD");
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        pagerAdapter = new FragmentStatePagerAdapter(getSupportFragmentManager()) {
+            @Override
+            public Fragment getItem(int i) {
+                //TODO: auto stub
+                return null;
+            }
+
+            @Override
+            public int getCount() {
+                //TODO: auto stub
+                return 0;
+            }
+        };
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setAdapter(pagerAdapter);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

@@ -163,7 +163,7 @@ public class BoardListActivityTest {
         JsonObject jsonContents = ResponseStubs.BoardListResponseStub();
         server.enqueue(new MockResponse()
                 .setResponseCode(200)
-                .throttleBody(24, 7, TimeUnit.SECONDS) // TODO: lengthen throttling time??
+                .throttleBody(1, 7, TimeUnit.SECONDS) // TODO: lengthen throttling time??
                 .setBody(jsonContents.toString()));
 
         // start the activity manually

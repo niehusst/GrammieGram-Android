@@ -5,6 +5,7 @@
     <item
         android:id="@+id/settings_button"
         android:icon="@drawable/ic_baseline_settings_20px"
+
         android:title="@string/settings_menu"
         app:showAsAction="ifRoom"/>
 

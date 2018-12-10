@@ -46,6 +46,7 @@ public class RetrofitAPITest {
                 .build();
 
         NetworkBehavior behavior = NetworkBehavior.create();
+        behavior.setFailurePercent(0); //dont allow it to randomly fail in stubbed test environment
 
         mockRetrofit = new MockRetrofit.Builder(retrofit)
                 .networkBehavior(behavior)
@@ -187,7 +188,7 @@ public class RetrofitAPITest {
         GrammieGramAPI mockAPI = new MockGrammieGramService(delegate);
 
         //get and execute api call
-        Call<SettingsResponse> update = mockAPI.updateSettings("Token 123", 12, true, true);
+        Call<SettingsResponse> update = mockAPI.updateSettings("Token 123", true, true);
         Response<SettingsResponse> response = update.execute();
 
         //assert response has expected data
@@ -202,7 +203,7 @@ public class RetrofitAPITest {
         GrammieGramAPI mockAPI = new MockGrammieGramServiceError(delegate);
 
         //get and execute api call (for clarity, input has no effect on resulting stubbed outputs)
-        Call<SettingsResponse> update = mockAPI.updateSettings("Token 123", 999, false, false);
+        Call<SettingsResponse> update = mockAPI.updateSettings("Token 123", false, false);
         Response<SettingsResponse> response = update.execute();
 
         //assert response has expected data

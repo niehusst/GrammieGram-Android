@@ -1,5 +1,7 @@
 package com.grammiegram.grammiegram_android;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.grammiegram.grammiegram_android.POJO.BoardListResponse;
 import com.grammiegram.grammiegram_android.POJO.CheckNewResponse;
 import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
@@ -23,6 +25,7 @@ public class GrammieGramService {
     private CallBack callBack;
     public static String BASE_URL = "https://grammiegram.com/api/";
 
+
     /**
      * Make the retrofit api objects that will be used to call the GrammieGram API
      *
@@ -30,9 +33,22 @@ public class GrammieGramService {
      *                 that will handle the responses from the api.
      */
     public GrammieGramService(CallBack callBack) {
+        // make json reader lenient with json syntax
+        Gson gson = new GsonBuilder().setLenient().create();
+
+        /********TESTING TO SEE RESPONSE JSON **********
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(interceptor)
+                .retryOnConnectionFailure(true)
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .build();
+        //***********************************************/
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
         this.api = retrofit.create(GrammieGramAPI.class);
         this.callBack = callBack;

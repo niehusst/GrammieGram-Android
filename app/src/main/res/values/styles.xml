@@ -8,8 +8,15 @@
         <item name="colorAccent">@color/grey</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <!-- Error Text. -->
+    <style name="ErrorText" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">#FF0000</item>
+        <item name="android:textSize">15sp</item>
+    </style>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
+    <!-- Link Text. -->
+    <style name="LinkText" parent="TextAppearance.AppCompat">
+        <item name="android:textColorLink">#3595E2</item>
+        <item name="android:textSize">20sp</item>
+    </style>
 </resources>

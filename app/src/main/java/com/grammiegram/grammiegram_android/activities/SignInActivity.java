@@ -1,42 +1,108 @@
 package com.grammiegram.grammiegram_android.activities;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.LoaderManager;
-import android.support.v7.app.AppCompatActivity;
-
-import android.content.CursorLoader;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.AsyncTask;
-
-import android.os.Build;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.text.TextUtils;
-import android.view.KeyEvent;
+import android.support.v7.app.AppCompatActivity;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.util.List;
-
+import com.grammiegram.grammiegram_android.GrammieGramService;
+import com.grammiegram.grammiegram_android.POJO.LoginResponse;
 import com.grammiegram.grammiegram_android.R;
+import com.grammiegram.grammiegram_android.interfaces.APIResponse;
+import com.grammiegram.grammiegram_android.interfaces.CallBack;
 
-import static android.Manifest.permission.READ_CONTACTS;
+import java.io.IOException;
 
-/**
- * A login screen that offers login via email/password.
- */
-public class SignInActivity extends AppCompatActivity {
+import okhttp3.ResponseBody;
+
+public class SignInActivity extends AppCompatActivity implements CallBack {
+    private GrammieGramService api = new GrammieGramService(this);
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences prefs = getSharedPreferences("grammiegram", MODE_PRIVATE);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.sign_in);
+        // If we already have an authentication token, jump to the board list
+        if (prefs.contains("auth_token")) {
+            launchBoardListActivity();
+        } else {
+            // Make the signup link clickable
+            TextView no_account = (TextView) findViewById(R.id.no_account);
+            no_account.setMovementMethod(LinkMovementMethod.getInstance());
+            // Make error text clear when going back to re-enter username/password
+            EditText username = (EditText) findViewById(R.id.username);
+            EditText password = (EditText) findViewById(R.id.password);
+            View.OnFocusChangeListener clrTxt = new ClearErrorText();
+            username.setOnFocusChangeListener(clrTxt);
+            password.setOnFocusChangeListener(clrTxt);
+        }
+    }
+
+    public class ClearErrorText implements View.OnFocusChangeListener {
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            TextView errorText = (TextView) findViewById(R.id.error);
+            String err = errorText.getText().toString();
+            if (hasFocus && !(err.equals(null) || err.equals(""))) {
+                errorText.setText("");}
+        }
+    }
+
+    public void signIn(View v) {
+        EditText username = (EditText) findViewById(R.id.username);
+        EditText password = (EditText) findViewById(R.id.password);
+        String theUsername = username.getText().toString();
+        String thePassword = password.getText().toString();
+        api.login(theUsername, thePassword);
+    }
+
+    @Override
+    public void onSuccess(APIResponse response) {
+        SharedPreferences prefs = getSharedPreferences("grammiegram", MODE_PRIVATE);
+        LoginResponse login = (LoginResponse) response;
+        if (login.getAuthenticated()) {
+            String token = login.getToken();
+            prefs.edit().putString("auth_token", token).commit();
+            launchBoardListActivity();
+        } else {
+            invalidCredentials();
+        }
+    }
+
+    @Override
+    public void onNetworkError(String err) {
+        TextView errorText = (TextView) findViewById(R.id.error);
+        errorText.setText(err);
+    }
+
+    @Override
+    public void onServerError(int err, ResponseBody response)
+    {
+        TextView errorText = (TextView) findViewById(R.id.error);
+        String error;
+        try {
+            error = response.string();
+        } catch (IOException e) {
+            error = e.toString(); }
+        errorText.setText(error);
+    }
+
+    public void invalidCredentials() {
+        TextView errorText = (TextView) findViewById(R.id.error);
+        errorText.setText("Invalid login. Please try again!");
+    }
+
+    public void launchBoardListActivity() {
+        Intent intent = new Intent(this, BoardListActivity.class);
+        startActivity(intent);
+        finish();
+        // Uncomment below for testing purposes
+        /*TextView errorText = (TextView) findViewById(R.id.error);
+        errorText.setText("Launch BoardList!");*/
+    }
 }
-

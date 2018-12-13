@@ -1,30 +1,26 @@
 package com.grammiegram.grammiegram_android;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.wifi.WifiManager;
 import android.support.test.espresso.contrib.RecyclerViewActions;
-import android.util.Log;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 
 import android.support.test.espresso.ViewInteraction;
-import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.filters.MediumTest;
-import android.support.test.InstrumentationRegistry;
+import android.util.Log;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.grammiegram.grammiegram_android.activities.BoardActivity;
 import com.grammiegram.grammiegram_android.activities.BoardListActivity;
-import com.grammiegram.grammiegram_android.activities.LoginActivity;
+import com.grammiegram.grammiegram_android.activities.SignInActivity;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 
@@ -35,7 +31,6 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -147,11 +142,11 @@ public class BoardListActivityTest {
         // find button
         ViewInteraction btn = onView(withId(R.id.logout_button)).check(matches(isDisplayed()));
 
-        // clicking button launches LoginActivity
+        // clicking button launches SignInActivity
         btn.perform(click());
 
         // check intent was launched to correct activity
-        intended(hasComponent(LoginActivity.class.getName()));
+        intended(hasComponent(SignInActivity.class.getName()));
     }
 
     /**

@@ -1,5 +1,7 @@
 package com.grammiegram.grammiegram_android;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.grammiegram.grammiegram_android.POJO.BoardListResponse;
@@ -10,6 +12,8 @@ import com.grammiegram.grammiegram_android.POJO.SettingsResponse;
 import com.grammiegram.grammiegram_android.interfaces.CallBack;
 import com.grammiegram.grammiegram_android.interfaces.GrammieGramAPI;
 
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -36,18 +40,16 @@ public class GrammieGramService {
         // make json reader lenient with json syntax
         Gson gson = new GsonBuilder().setLenient().create();
 
-        /********TESTING TO SEE RESPONSE JSON **********
+        //********TESTING TO SEE RESPONSE JSON **********
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(interceptor)
-                .retryOnConnectionFailure(true)
-                .connectTimeout(15, TimeUnit.SECONDS)
-                .build();
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
+
         //***********************************************/
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
+                .client(client)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
         this.api = retrofit.create(GrammieGramAPI.class);

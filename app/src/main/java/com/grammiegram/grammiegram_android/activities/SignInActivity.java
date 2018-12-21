@@ -1,11 +1,15 @@
 package com.grammiegram.grammiegram_android.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -37,9 +41,9 @@ public class SignInActivity extends AppCompatActivity implements CallBack {
             // Make error text clear when going back to re-enter username/password
             EditText username = (EditText) findViewById(R.id.username);
             EditText password = (EditText) findViewById(R.id.password);
-            View.OnFocusChangeListener clrTxt = new ClearErrorText();
-            username.setOnFocusChangeListener(clrTxt);
-            password.setOnFocusChangeListener(clrTxt);
+            View.OnFocusChangeListener clrErrTxt = new ClearErrorText();
+            username.setOnFocusChangeListener(clrErrTxt);
+            password.setOnFocusChangeListener(clrErrTxt);
         }
     }
 
@@ -49,9 +53,11 @@ public class SignInActivity extends AppCompatActivity implements CallBack {
             TextView errorText = (TextView) findViewById(R.id.error);
             String err = errorText.getText().toString();
             if (hasFocus && !(err.equals(null) || err.equals(""))) {
-                errorText.setText("");}
+                errorText.setText("");
+            }
         }
     }
+
 
     public void signIn(View v) {
         EditText username = (EditText) findViewById(R.id.username);

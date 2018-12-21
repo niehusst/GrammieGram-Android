@@ -40,7 +40,7 @@ public class GrammieGramService {
         // make json reader lenient with json syntax
         Gson gson = new GsonBuilder().setLenient().create();
 
-        //********TESTING TO SEE RESPONSE JSON **********
+        /********TESTING TO SEE RESPONSE JSON **********
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
@@ -49,7 +49,7 @@ public class GrammieGramService {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
-                .client(client)
+                //.client(client)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
         this.api = retrofit.create(GrammieGramAPI.class);

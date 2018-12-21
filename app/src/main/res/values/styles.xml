@@ -1,11 +1,20 @@
 <resources>
 
+    <!-- TODO: add back missing styles that cause linking error -->
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/birdRed</item>
         <item name="colorPrimaryDark">@color/grammiegramRed</item>
         <item name="colorAccent">@color/grey</item>
+    </style>
+
+    <!-- theme containing the default action bar -->
+    <style name="AppThemeDefaultActionBar" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <!-- Error Text. -->
@@ -19,4 +28,10 @@
         <item name="android:textColorLink">#3595E2</item>
         <item name="android:textSize">20sp</item>
     </style>
+
+    <!-- auto generated trash? TODO: delete? -->
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
 </resources>

@@ -67,7 +67,7 @@ public class SignInActivity extends AppCompatActivity implements CallBack {
         LoginResponse login = (LoginResponse) response;
         if (login.getAuthenticated()) {
             String token = login.getToken();
-            prefs.edit().putString("auth_token", token).commit();
+            prefs.edit().putString("auth_token", token).apply();
             launchBoardListActivity();
         } else {
             invalidCredentials();
@@ -94,15 +94,12 @@ public class SignInActivity extends AppCompatActivity implements CallBack {
 
     public void invalidCredentials() {
         TextView errorText = (TextView) findViewById(R.id.error);
-        errorText.setText("Invalid login. Please try again!");
+        errorText.setText("Invalid login. Please try again");
     }
 
     public void launchBoardListActivity() {
         Intent intent = new Intent(this, BoardListActivity.class);
         startActivity(intent);
         finish();
-        // Uncomment below for testing purposes
-        /*TextView errorText = (TextView) findViewById(R.id.error);
-        errorText.setText("Launch BoardList!");*/
     }
 }

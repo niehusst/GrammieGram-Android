@@ -23,7 +23,7 @@
         android:id="@+id/board_list_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/> <!-- TODO: this is super wrong? -->
+        android:visibility="gone"/>
 
 
     <!-- rv to hold list of boards -->

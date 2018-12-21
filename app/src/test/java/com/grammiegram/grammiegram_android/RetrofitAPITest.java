@@ -1,7 +1,5 @@
 package com.grammiegram.grammiegram_android;
 
-import android.content.Context;
-
 import com.grammiegram.grammiegram_android.POJO.BoardListResponse;
 import com.grammiegram.grammiegram_android.POJO.CheckNewResponse;
 import com.grammiegram.grammiegram_android.POJO.ErrorResponse;

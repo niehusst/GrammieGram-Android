@@ -54,7 +54,7 @@ dependencies {
         exclude group: "net.bytebuddy"
     }
     implementation 'com.squareup.retrofit2:retrofit-mock:2.5.0'
-    androidTestImplementation 'androidx.test:core:1.0.0'
+    androidTestImplementation 'androidx.test:core:1.1.0'
 
     // CORE
     //implementation 'com.android.support:support-fragment:28.0.0'
@@ -68,8 +68,7 @@ dependencies {
 
     // ADDONS
     implementation 'com.squareup.picasso:picasso:2.5.2'
-    //implementation 'com.squareup.okhttp3:okhttp:3.12.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.3.1' //interceptor TODO: delete
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.0' //interceptor TODO: delete
     androidTestImplementation('com.squareup.okhttp:mockwebserver:2.7.0')
 
     // RETROFIT

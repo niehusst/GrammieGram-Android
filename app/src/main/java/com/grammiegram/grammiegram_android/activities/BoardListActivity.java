@@ -187,8 +187,8 @@ public class BoardListActivity extends AppCompatActivity implements CallBack, Se
 
         //api call (handling goes to callback interface methods)
         SharedPreferences sharedPreferences = getSharedPreferences("grammiegram", Context.MODE_PRIVATE);
-        String token = "";//sharedPreferences.getString(R.string.auth_token); //TODO: re-enable this
-        api.getBoards("Token " + token);
+        String token = sharedPreferences.getString("auth_token", "auth_token");
+        api.getBoards(token);
 
         //finished loading, make dialogue invisible again
         dialogue.setVisibility(View.GONE);

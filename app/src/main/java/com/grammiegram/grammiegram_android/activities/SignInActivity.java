@@ -83,24 +83,19 @@ public class SignInActivity extends AppCompatActivity implements CallBack {
     @Override
     public void onNetworkError(String err) {
         TextView errorText = (TextView) findViewById(R.id.error);
-        errorText.setText(err);
+        errorText.setText(getString(R.string.wifi_error));
     }
 
     @Override
     public void onServerError(int err, ResponseBody response)
     {
         TextView errorText = (TextView) findViewById(R.id.error);
-        String error;
-        try {
-            error = response.string();
-        } catch (IOException e) {
-            error = e.toString(); }
-        errorText.setText(error);
+        errorText.setText(getString(R.string.server_error));
     }
 
     public void invalidCredentials() {
         TextView errorText = (TextView) findViewById(R.id.error);
-        errorText.setText("Invalid login. Please try again");
+        errorText.setText(getString(R.string.error_invalid_login));
     }
 
     public void launchBoardListActivity() {

@@ -6,4 +6,5 @@
     <string name="wifi_error">WiFi Not Found</string>
     <string name="server_error">We are having difficulty fetching data at the moment.\nPlease try again later.</string>
     <string name="no_account"><a href="https://grammiegram.com/signup">No account? Sign up!</a></string>
+    <string name="title_activity_list_grams_">ListGrams_Activity</string>
 </resources>

@@ -100,9 +100,9 @@ public class GrammieGramService {
     /**
      * Handling of the API response when getGrams is called
      */
-    public void getGrams() {
+    public void getGrams(String authToken, String displayName) {
         //get the api call object
-        Call<GramsListResponse> call = api.getGrams();
+        Call<GramsListResponse> call = api.getGrams(authToken, displayName);
 
         //execute asynchronously to avoid hogging UI thread
         call.enqueue(new Callback<GramsListResponse>() {

@@ -98,7 +98,7 @@ public class SignInActivity extends AppCompatActivity implements CallBack {
     }
 
     public void launchBoardListActivity() {
-        Intent intent = new Intent(this, BoardListActivity.class);
+        Intent intent = new Intent(this, ListGrams_Activity.class);
         startActivity(intent);
         finish();
         // Uncomment below for testing purposes

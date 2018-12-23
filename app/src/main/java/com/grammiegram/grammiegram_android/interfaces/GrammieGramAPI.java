@@ -9,6 +9,7 @@ import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 
 public interface GrammieGramAPI {
@@ -23,6 +24,7 @@ public interface GrammieGramAPI {
     @POST("login/")
     Call<LoginResponse> login(@Field("username") String username, @Field("password") String password);
 
-    @POST("list_grams")
-    Call<GramsListResponse> getGrams();
+    @FormUrlEncoded
+    @POST("list_grams/")
+    Call<GramsListResponse> getGrams(@Header("Authorization") String authToken, @Field("display_name") String displayName);
 }

@@ -18,7 +18,7 @@ import retrofit2.http.POST;
 public interface GrammieGramAPI {
 
     //@Headers("Content-Type: application/json")
-    @GET("board_list/")
+    @GET("list_boards/")
     Call<BoardListResponse> getBoards(@Header("Authorization") String auth);
 
     //@Headers("Content-Type: application/json")

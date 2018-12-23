@@ -68,7 +68,6 @@ dependencies {
 
     // ADDONS
     implementation 'com.squareup.picasso:picasso:2.5.2'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.0' //interceptor TODO: delete
     androidTestImplementation('com.squareup.okhttp:mockwebserver:2.7.0')
 
     // RETROFIT

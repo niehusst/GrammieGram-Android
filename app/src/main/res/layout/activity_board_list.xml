@@ -31,7 +31,6 @@
         android:id="@+id/board_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/grey"
         tools:listitem="@layout/list_item_recycler"
         />
 

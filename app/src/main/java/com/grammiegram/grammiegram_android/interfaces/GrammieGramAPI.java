@@ -31,7 +31,7 @@ public interface GrammieGramAPI {
 
     //@Headers("Content-Type: application/json")
     @POST("list_grams/")
-    Call<GramsListResponse> getGrams(@Header("Authorization") String auth, @Body String boardDisplayName); //TODO: requires @Query?
+    Call<GramsListResponse> getGrams(@Header("Authorization") String auth, @Body String boardDisplayName);
 
     //@Headers("Content-Type: application/json")
     @POST("check_new_add/")
@@ -40,7 +40,7 @@ public interface GrammieGramAPI {
     /*
     make board, send gram, get contacts
 
-    this may be necessary for getting picture media get/send Grams???
+    this multipart decorator may be necessary for getting picture media get/send Grams???
     @Multipart
 @PUT("user/photo")
 Call<User> updateUser(@Part("photo") RequestBody photo, @Part("description") RequestBody description);

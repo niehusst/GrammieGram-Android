@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,19 +23,22 @@ import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import com.grammiegram.grammiegram_android.GrammieGramService;
+import com.grammiegram.grammiegram_android.POJO.Board;
 import com.grammiegram.grammiegram_android.POJO.BoardListResponse;
 import com.grammiegram.grammiegram_android.R;
 import com.grammiegram.grammiegram_android.adapters.BoardListRecyclerAdapter;
 import com.grammiegram.grammiegram_android.fragments.SettingsFragment;
 import com.grammiegram.grammiegram_android.interfaces.APIResponse;
 import com.grammiegram.grammiegram_android.interfaces.CallBack;
+import com.grammiegram.grammiegram_android.interfaces.ItemClickListener;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.ResponseBody;
 
-public class BoardListActivity extends AppCompatActivity implements CallBack, SettingsFragment.OnFragmentInteractionListener {
+public class BoardListActivity extends AppCompatActivity implements
+        CallBack, SettingsFragment.OnFragmentInteractionListener, ItemClickListener {
 
     private GrammieGramService api;
 
@@ -43,6 +47,7 @@ public class BoardListActivity extends AppCompatActivity implements CallBack, Se
     public RecyclerView recyclerView;
     @BindView(R.id.toolbar)
     public Toolbar toolbar;
+    private BoardListRecyclerAdapter adapter;
 
     //loading progress views
     @BindView(R.id.progress_dialogue)
@@ -75,6 +80,7 @@ public class BoardListActivity extends AppCompatActivity implements CallBack, Se
         setSupportActionBar(toolbar);
 
         //put spacing between rv items
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new DividerItemDecoration(BoardListActivity.this,
                 DividerItemDecoration.VERTICAL));
 
@@ -173,7 +179,7 @@ public class BoardListActivity extends AppCompatActivity implements CallBack, Se
         FragmentManager manager = getFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
 
-        transaction.replace(R.id.board_list_container, new SettingsFragment()); //TODO: this is wrong??
+        transaction.replace(R.id.board_list_container, new SettingsFragment());
         transaction.addToBackStack(null);
         transaction.commit();
     }
@@ -187,7 +193,7 @@ public class BoardListActivity extends AppCompatActivity implements CallBack, Se
 
         //api call (handling goes to callback interface methods)
         SharedPreferences sharedPreferences = getSharedPreferences("grammiegram", Context.MODE_PRIVATE);
-        String token = sharedPreferences.getString("auth_token", "auth_token");
+        String token = sharedPreferences.getString("auth_token", "DEFAULT");
         api.getBoards(token);
 
         //finished loading, make dialogue invisible again
@@ -200,15 +206,28 @@ public class BoardListActivity extends AppCompatActivity implements CallBack, Se
      */
     @Override
     public void onSuccess(APIResponse response) {
-        recyclerView.setVisibility(View.VISIBLE);
         settingsFrag.setVisibility(View.GONE);
+        errImg.setVisibility(View.GONE);
+        errText.setVisibility(View.GONE);
+        errRetryBtn.setVisibility(View.GONE);
         BoardListResponse bl = (BoardListResponse) response;
 
         //set response data into the adapter
-        BoardListRecyclerAdapter adapter = new BoardListRecyclerAdapter(bl, this);
+        this.adapter = new BoardListRecyclerAdapter(bl, this, this);
 
-        //set recycler view w/ adapter
-        recyclerView.setAdapter(adapter);
+        if(this.adapter.getItemCount() == 0) {
+            //no boards to display
+            errText.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+
+            //display help text
+            errText.setText(R.string.no_boards);
+        } else {
+            recyclerView.setVisibility(View.VISIBLE);
+
+            //set recycler view w/ adapter
+            recyclerView.setAdapter(adapter);
+        }
     }
 
     /**
@@ -227,7 +246,7 @@ public class BoardListActivity extends AppCompatActivity implements CallBack, Se
         errText.setText(R.string.wifi_error);
 
         //make toast
-        Toast.makeText(this, error, Toast.LENGTH_SHORT).show(); //TODO: change msg to "Network Error"
+        Toast.makeText(this, "Network Error", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -254,5 +273,23 @@ public class BoardListActivity extends AppCompatActivity implements CallBack, Se
     @Override
     public void onFragmentInteraction(Uri uri) {
         //required by Fragment class parent activity
+    }
+
+    /**
+     * Listener for launching the BoardActivity with data about the board that was clicked
+     *
+     * @param view - view that was clicked
+     * @param pos - position in adapter of view that was clicked
+     */
+    @Override
+    public void onItemClick(View view, int pos) {
+        Intent intent = new Intent(this, BoardActivity.class);
+
+        //add board data to intent
+        Board board = adapter.getItem(pos);
+        intent.putExtra("BOARD", board);
+
+        startActivity(intent);
+        finish();
     }
 }

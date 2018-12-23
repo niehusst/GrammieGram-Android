@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import com.grammiegram.grammiegram_android.POJO.Board;
 import com.grammiegram.grammiegram_android.POJO.BoardListResponse;
 import com.grammiegram.grammiegram_android.R;
 import com.grammiegram.grammiegram_android.activities.BoardActivity;
+import com.grammiegram.grammiegram_android.interfaces.ItemClickListener;
 
 import java.util.List;
 
@@ -22,17 +24,20 @@ public class BoardListRecyclerAdapter extends RecyclerView.Adapter<BoardListRecy
 
     private List<Board> boardList;
     private Context mContext;
+    private LayoutInflater inflater;
+    private ItemClickListener clickListener;
 
-    public BoardListRecyclerAdapter(BoardListResponse response, Context context) {
+    public BoardListRecyclerAdapter(BoardListResponse response, Context context, ItemClickListener listerActivity) {
         this.mContext = context;
         this.boardList = response.getBoardList();
+        this.inflater = LayoutInflater.from(this.mContext);
+        this.clickListener = listerActivity;
     }
 
 
     @NonNull
     @Override
-    public BoardListRecyclerAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        final LayoutInflater inflater = LayoutInflater.from(mContext);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int type) {
         View boardListItemView = inflater.inflate(R.layout.list_item_recycler, viewGroup, false);
         return new ViewHolder(boardListItemView);
     }
@@ -44,7 +49,7 @@ public class BoardListRecyclerAdapter extends RecyclerView.Adapter<BoardListRecy
      * @param position - index of list item
      */
     @Override
-    public void onBindViewHolder(@NonNull BoardListRecyclerAdapter.ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
         Board board = this.boardList.get(position);
 
         String boardName = board.getBoardFirstName() + " " + board.getBoardLastName();
@@ -68,7 +73,7 @@ public class BoardListRecyclerAdapter extends RecyclerView.Adapter<BoardListRecy
     /**
      * Class to hold the inflated views for recycler view
      */
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class ViewHolder extends RecyclerView.ViewHolder {//implements View.OnClickListener {
 
         TextView explainText;
         TextView boardNames;
@@ -77,30 +82,24 @@ public class BoardListRecyclerAdapter extends RecyclerView.Adapter<BoardListRecy
          * Set the views by their corresponding id
          * @param itemView - view to hold
          */
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
 
             boardNames = itemView.findViewById(R.id.rv_item_board_names);
             explainText = itemView.findViewById(R.id.rv_item_text);
-        }
-
-        /**
-         * When a list item is clicked, we must launch the BoardActivity
-         * @param view - The list item clicked
-         */
-        @Override
-        public void onClick(View view) {
-            Intent intent = new Intent(mContext, BoardActivity.class);
-
-            //add board data to intent
-            Board board = getItem(this.getLayoutPosition());
-            intent.putExtra("BOARD", board);
-
-            //stand in for finishing activity
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-            mContext.startActivity(intent);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                /**
+                 * When a list item is clicked, we must launch the BoardActivity
+                 *
+                 * @param view - The list item clicked
+                 */
+                @Override
+                public void onClick(View view) {
+                    if(clickListener != null) {
+                        clickListener.onItemClick(view, getAdapterPosition());
+                    } //else perform no action
+                }
+            });
         }
     }
-
 }

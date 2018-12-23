@@ -1,6 +1,5 @@
 <resources>
 
-    <!-- TODO: add back missing styles that cause linking error -->
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <!-- Customize your theme here. -->

@@ -31,8 +31,13 @@ public class ListGrams_Activity extends AppCompatActivity implements CallBack {
         setContentView(R.layout.activity_list_grams);
         String token = prefs.getString("auth_token", "");
         String displayName = "testBoard";
-        TextView tok = (TextView) findViewById(R.id.token);
-        tok.setText(token);
+        api.getGrams(token, displayName);
+    }
+
+    public void refresh(View v) {
+        SharedPreferences prefs = getSharedPreferences("grammiegram", MODE_PRIVATE);
+        String token = prefs.getString("auth_token", "");
+        String displayName = "testBoard";
         api.getGrams(token, displayName);
     }
 

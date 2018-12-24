@@ -178,10 +178,16 @@ public class BoardListActivity extends AppCompatActivity implements
         settingsFrag.setVisibility(View.VISIBLE);
         FragmentManager manager = getFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-
+        transaction.setCustomAnimations(R.animator.slide_in, R.animator.slide_out, R.animator.slide_in, R.animator.slide_out);
         transaction.replace(R.id.board_list_container, new SettingsFragment());
         transaction.addToBackStack(null);
         transaction.commit();
+
+
+        /*
+        TODO: add line to pop off fragments that are built up? but replace should prevent build up????
+        getFragmentManager().popBackStack();
+         */
     }
 
     /**

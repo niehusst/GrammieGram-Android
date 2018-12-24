@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.grammiegram.grammiegram_android.fragments.SettingsFragment">
+    tools:context="com.grammiegram.grammiegram_android.fragments.SettingsFragment"
+    android:background="@color/grey">
 
     <!-- put joels stuff here-->
     <TextView

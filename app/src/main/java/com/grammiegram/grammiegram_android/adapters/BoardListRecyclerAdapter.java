@@ -1,21 +1,16 @@
 package com.grammiegram.grammiegram_android.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.grammiegram.grammiegram_android.POJO.Board;
 import com.grammiegram.grammiegram_android.POJO.BoardListResponse;
 import com.grammiegram.grammiegram_android.R;
-import com.grammiegram.grammiegram_android.activities.BoardActivity;
 import com.grammiegram.grammiegram_android.interfaces.ItemClickListener;
 
 import java.util.List;

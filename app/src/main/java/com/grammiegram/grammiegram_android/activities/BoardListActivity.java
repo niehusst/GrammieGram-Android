@@ -4,7 +4,6 @@ import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -148,8 +147,12 @@ public class BoardListActivity extends AppCompatActivity implements
     @Override
     public void onBackPressed() {
         if(settingsFrag.getVisibility() == View.VISIBLE) {
+            //destroy fragment
+            getSupportFragmentManager().popBackStack();
             settingsFrag.setVisibility(View.GONE);
 
+            //bring back toolbar
+            toolbar.setVisibility(View.VISIBLE);
         } else {
             BoardListActivity.super.onBackPressed();
         }
@@ -175,20 +178,16 @@ public class BoardListActivity extends AppCompatActivity implements
      * Launches the board activity of the selected board item from recycler view
      */
     private void launchSettingsFragment() {
-        //toolbar.setVisibility(View.GONE);
-        /* ^^^ allow for toolbar to disapear w/ fragment, preventing frag buildup by repeated presses
-        TODO: implement onBackButtonPressed
-        make it so taht when there is a fragemtn already created, it pops it off and makes the toolbar visible again
-        getFragmentManager().popBackStack(); //pop frag
+        //allow for toolbar to disapear w/ fragment, preventing frag buildup by repeated presses
+        toolbar.setVisibility(View.GONE);
 
-        and if there isnt frag already created then it finishes activity/closes app
-         */
+        //create and launch settings fragment
         settingsFrag.setVisibility(View.VISIBLE);
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_right, R.anim.slide_in_right, R.anim.slide_out_right);
                 //R.animator.slide_in, R.animator.slide_out, R.animator.slide_in, R.animator.slide_out);
-        transaction.replace(R.id.board_list_container, new SettingsFragment());
+        transaction.replace(R.id.board_list_container, SettingsFragment.newInstance());
         transaction.addToBackStack(null);
         transaction.commit();
 
@@ -282,12 +281,10 @@ public class BoardListActivity extends AppCompatActivity implements
 
     /**
      * Actions to perform in parent activity (this) when interactions happen in child fragment
-     *
-     * @param uri - arbitrary parameter
      */
     @Override
-    public void onFragmentInteraction(Uri uri) {
-        //required by Fragment class parent activity
+    public void onFragmentInteraction() {
+        onBackPressed();
     }
 
     /**
@@ -307,4 +304,5 @@ public class BoardListActivity extends AppCompatActivity implements
         startActivity(intent);
         finish();
     }
+
 }

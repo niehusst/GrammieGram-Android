@@ -6,9 +6,11 @@
     android:background="@color/grey">
 
     <!-- put joels stuff here-->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="place holder" />
+    <Button
+        android:id="@+id/frgbutt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/blue"
+        android:text="back" />
 
 </android.support.constraint.ConstraintLayout>

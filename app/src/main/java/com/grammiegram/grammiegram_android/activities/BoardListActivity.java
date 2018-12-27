@@ -85,6 +85,8 @@ public class BoardListActivity extends AppCompatActivity implements
 
         //load up boards into recycler view
         getBoards();
+
+        //TODO: set text size of rv list items
     }
 
     /**
@@ -150,7 +152,10 @@ public class BoardListActivity extends AppCompatActivity implements
             //destroy fragment
             getSupportFragmentManager().popBackStack();
             settingsFrag.setVisibility(View.GONE);
-
+            /*
+            * the problem is that if i set the frag as gone, it doesn't play the back animation,
+            * but if i dont, the framelayout still covers the screen, preventing app usage
+            */
             //bring back toolbar
             toolbar.setVisibility(View.VISIBLE);
         } else {

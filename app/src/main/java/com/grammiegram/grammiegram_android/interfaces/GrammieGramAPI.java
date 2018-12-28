@@ -12,16 +12,13 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
-import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
 public interface GrammieGramAPI {
 
-    //@Headers("Content-Type: application/json")
     @GET("list_boards/")
     Call<BoardListResponse> getBoards(@Header("Authorization") String auth);
 
-    //@Headers("Content-Type: application/json")
     @POST("update_settings/")
     Call<SettingsResponse> updateSettings(@Header("Authorization") String auth, @Body boolean audioNotifications, @Body boolean profanityFilter);
 
@@ -29,11 +26,9 @@ public interface GrammieGramAPI {
     @POST("login/")
     Call<LoginResponse> login(@Field("username") String username, @Field("password") String password);
 
-    //@Headers("Content-Type: application/json")
     @POST("list_grams/")
     Call<GramsListResponse> getGrams(@Header("Authorization") String auth, @Body String boardDisplayName);
 
-    //@Headers("Content-Type: application/json")
     @POST("check_new_add/")
     Call<CheckNewResponse> checkNewGrams(@Header("Authorization") String auth, @Body String boardDisplayName);
 

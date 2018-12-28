@@ -4,10 +4,11 @@
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.grammiegram.grammiegram_android.activities.BoardActivity$PlaceholderFragment">
+    tools:context="com.grammiegram.grammiegram_android.fragments.BoardPagerFragment">
 
+    <!-- TODO: make this a TextViewCompat so that we can use autoscaling text elements -->
     <TextView
-        android:id="@+id/section_label"
+        android:id="@+id/gram_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
@@ -17,6 +18,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="@+id/constraintLayout"
         tools:layout_constraintLeft_creator="1"
-        tools:layout_constraintTop_creator="1" />
+        tools:layout_constraintTop_creator="1"
+        android:text="@string/app_name"/>
 
 </android.support.constraint.ConstraintLayout>

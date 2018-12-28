@@ -85,8 +85,6 @@ public class BoardListActivity extends AppCompatActivity implements
 
         //load up boards into recycler view
         getBoards();
-
-        //TODO: set text size of rv list items
     }
 
     /**

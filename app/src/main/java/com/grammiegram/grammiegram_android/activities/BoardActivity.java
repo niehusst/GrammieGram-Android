@@ -1,26 +1,27 @@
 package com.grammiegram.grammiegram_android.activities;
 
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 
 import android.widget.TextView;
 
 import com.grammiegram.grammiegram_android.POJO.Board;
+import com.grammiegram.grammiegram_android.POJO.Gram;
+import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
 import com.grammiegram.grammiegram_android.R;
+import com.grammiegram.grammiegram_android.adapters.BoardFragmentPagerAdapter;
+
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
 
 /**
  * The activity that displays a board's current grams.
@@ -30,6 +31,7 @@ import com.grammiegram.grammiegram_android.R;
 public class BoardActivity extends AppCompatActivity {
     //TODO: make set landscape rotation and prevent falling asleep
     //TODO: make pager automatically rotate every 30? seconds
+    //TODO: implement logic of gram traversal
 
     /*
      * The {@link android.support.v4.app.FragmentStatePagerAdapter} that will provide
@@ -51,38 +53,37 @@ public class BoardActivity extends AppCompatActivity {
         //Get board data to load from intent
         Board board = (Board) getIntent().getParcelableExtra("BOARD");
 
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        pagerAdapter = new FragmentStatePagerAdapter(getSupportFragmentManager()) {
-            @Override
-            public Fragment getItem(int i) {
-                //TODO: auto stub
-                return null;
-            }
-
-            @Override
-            public int getCount() {
-                //TODO: auto stub
-                return 0;
-            }
-        };
+        //TODO: while(1) { if(apiresponse.boardUpdateNeeded()) { add new grams to adapter?, create new adapter? how wil that look UI side?
+        //TODO: create a service that runs async in bg checking for/doing updates to board grams
+        // Create the adapter that will return a fragment for each gram
+        GramsListResponse g = new GramsListResponse(); //TODO: delete this debugging stuff
+        g.setGrams(new ArrayList<Gram>()); //still delet this
+        pagerAdapter = new BoardFragmentPagerAdapter(g, getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(pagerAdapter);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
+        if(pagerAdapter.getCount() == 0) {
+            //set up no grams views
+            //TODO: set date and time for no grams views (make these TextViewCompat!) (Or TextClock????)
+            TextView date = (TextView) findViewById(R.id.date);
+            TextView time = (TextView) findViewById(R.id.time);
+            date.setText(getString(R.string.date, "date date"));
+            time.setText(getString(R.string.time, "2am"));
+        } else {
+            //TODO: set up grams in fragment pager
+        }
     }
 
 
+
+    /**
+     * inflate app bar
+     *
+     * @param menu - the menu xml
+     * @return - creation status
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -90,18 +91,16 @@ public class BoardActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Handle clicks to items in appbar menu
+     *
+     * @param item - menu item that was clicked
+     * @return - option selection
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
+        //add handling of button click here if we decide to add buttons to app bar
         return super.onOptionsItemSelected(item);
     }
 

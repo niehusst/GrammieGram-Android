@@ -19,18 +19,23 @@ public interface GrammieGramAPI {
     @GET("list_boards/")
     Call<BoardListResponse> getBoards(@Header("Authorization") String auth);
 
+    @FormUrlEncoded
     @POST("update_settings/")
-    Call<SettingsResponse> updateSettings(@Header("Authorization") String auth, @Body boolean audioNotifications, @Body boolean profanityFilter);
+    Call<SettingsResponse> updateSettings(@Header("Authorization") String auth,
+                                          @Field("audio_notifications") boolean audioNotifications,
+                                          @Field("profanity_filter") boolean profanityFilter);
 
     @FormUrlEncoded
     @POST("login/")
     Call<LoginResponse> login(@Field("username") String username, @Field("password") String password);
 
+    @FormUrlEncoded
     @POST("list_grams/")
-    Call<GramsListResponse> getGrams(@Header("Authorization") String auth, @Body String boardDisplayName);
+    Call<GramsListResponse> getGrams(@Header("Authorization") String authToken, @Field("display_name") String displayName);
 
+    @FormUrlEncoded
     @POST("check_new_add/")
-    Call<CheckNewResponse> checkNewGrams(@Header("Authorization") String auth, @Body String boardDisplayName);
+    Call<CheckNewResponse> checkNewGrams(@Header("Authorization") String auth, @Field("display_name") String displayName);
 
     /*
     make board, send gram, get contacts

@@ -2,7 +2,8 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white">
     <TextView
         android:id="@+id/error"
         android:gravity="center"
@@ -13,7 +14,7 @@
         app:layout_constraintTop_toTopOf="parent" />
     <ImageView
         android:id="@+id/bird"
-        android:src="@drawable/logo"
+        android:src="@drawable/vector_logo"
         android:contentDescription="@string/app_name"
         android:layout_height="0dp"
         android:layout_width="match_parent"
@@ -23,6 +24,8 @@
         android:id="@+id/username"
         android:hint="@string/username_hint"
         android:layout_height="0dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/grey"
         android:layout_width="match_parent"
         app:layout_constraintHeight_percent="0.15"
         app:layout_constraintTop_toBottomOf="@+id/bird"
@@ -33,6 +36,8 @@
         android:hint="@string/password_hint"
         android:inputType="textPassword"
         android:layout_height="0dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/grey"
         android:layout_width="match_parent"
         app:layout_constraintHeight_percent="0.15"
         app:layout_constraintTop_toBottomOf="@+id/username"
@@ -41,6 +46,7 @@
     <Button
         android:id="@+id/sign_in_button"
         android:text="@string/login_button"
+        android:background="@color/grammiegramRed"
         android:textSize="15sp"
         android:onClick="signIn"
         android:layout_height="0dp"

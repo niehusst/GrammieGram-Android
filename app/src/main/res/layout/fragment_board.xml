@@ -7,7 +7,8 @@
     android:layout_height="match_parent"
     tools:context="com.grammiegram.grammiegram_android.fragments.BoardPagerFragment">
 
-    <!-- TODO: add buttons to fragment for paging between grams? -->
+    <!-- TODO: add buttons to fragment for paging between grams?
+    TODO: word wrapping so words aren't split???-->
     <TextView
         android:id="@+id/gram_message"
         android:layout_width="match_parent"

@@ -57,7 +57,11 @@ public class BoardActivity extends AppCompatActivity {
         //TODO: create a service that runs async in bg checking for/doing updates to board grams
         // Create the adapter that will return a fragment for each gram
         GramsListResponse g = new GramsListResponse(); //TODO: delete this debugging stuff
-        g.setGrams(new ArrayList<Gram>()); //still delet this
+        ArrayList<Gram> grams = new ArrayList<Gram>();
+        Gram gg = new Gram();
+        gg.setMessage("Hello GrammieGram!");
+        grams.add(gg);
+        g.setGrams(grams); //still delet this
         pagerAdapter = new BoardFragmentPagerAdapter(g, getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
@@ -72,8 +76,10 @@ public class BoardActivity extends AppCompatActivity {
             date.setText(getString(R.string.date, "date date"));
             time.setText(getString(R.string.time, "2am"));
         } else {
-            //TODO: set up grams in fragment pager
+            //TODO: set up grams in fragment pager (other views to gone?)
         }
+
+        //TODO: make text setting function for clock
     }
 
 

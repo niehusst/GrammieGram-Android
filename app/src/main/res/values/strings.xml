@@ -5,5 +5,6 @@
     <string name="loading_text">Fetching Data &#8230;</string>
     <string name="wifi_error">WiFi Not Found</string>
     <string name="server_error">We are having difficulty fetching data at the moment.\nPlease try again later.</string>
-    <string name="no_account"><a href="https://grammiegram.com/signup">No account? Sign up!</a></string>
+    <string name="no_account"><a href="https://grammiegram.com/signup/">No account? Sign up!</a></string>
+    <string name="forgot"><a href="https://grammiegram.com/forgot_password/">Forgot your password?</a></string>
 </resources>

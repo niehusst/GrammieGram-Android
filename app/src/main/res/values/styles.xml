@@ -28,7 +28,7 @@
         <item name="android:textSize">20sp</item>
     </style>
 
-    <!-- auto generated trash? TODO: delete? part of auto generated fragment?  -->
+    <!-- auto generated for fragment layouts -->
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />

@@ -24,6 +24,7 @@ import com.grammiegram.grammiegram_android.POJO.Gram;
 import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
 import com.grammiegram.grammiegram_android.R;
 import com.grammiegram.grammiegram_android.adapters.BoardFragmentPagerAdapter;
+import com.grammiegram.grammiegram_android.fragments.SettingsFragment;
 import com.grammiegram.grammiegram_android.interfaces.APIResponse;
 import com.grammiegram.grammiegram_android.interfaces.CallBack;
 
@@ -40,8 +41,6 @@ import okhttp3.ResponseBody;
 public class BoardActivity extends AppCompatActivity implements CallBack {
     //TODO: make set landscape rotation and prevent falling asleep
     //TODO: where is framgemtn manager that is acutally lanuching first frag??
-
-    private GrammieGramService api;
 
     /*
      * The {@link android.support.v4.app.FragmentStatePagerAdapter} that will provide
@@ -76,8 +75,6 @@ public class BoardActivity extends AppCompatActivity implements CallBack {
 
         ButterKnife.bind(this);
 
-        api = new GrammieGramService(this);
-
         // Get board data to load from intent
         Board board = (Board) getIntent().getParcelableExtra("BOARD");
 
@@ -101,6 +98,13 @@ public class BoardActivity extends AppCompatActivity implements CallBack {
             time.setText(getString(R.string.time, "2am"));
         } else {
             //TODO: set up grams in fragment pager (other views to gone?)
+            FragmentManager manager = getSupportFragmentManager();
+            FragmentTransaction transaction = manager.beginTransaction();
+            transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_right,
+                    R.anim.slide_in_right, R.anim.slide_out_right);
+            transaction.replace(R.id.board_list_container, pagerAdapter.getItem(0));
+            transaction.addToBackStack(null);
+            transaction.commit();
         }
 
         //TODO: make text setting function for clock and date (while doing checknew service?)
@@ -108,7 +112,6 @@ public class BoardActivity extends AppCompatActivity implements CallBack {
         //TODO: make pager automatically rotate every 30? seconds. (try to do from prev rotate, not just time)
         //TODO: make another async task that cycles through grams???
     }
-
 
 
     /**

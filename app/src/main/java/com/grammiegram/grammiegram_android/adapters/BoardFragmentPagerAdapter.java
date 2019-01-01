@@ -17,7 +17,6 @@ import java.util.List;
  * one of the sections/tabs/pages.
  */
 public class BoardFragmentPagerAdapter extends FragmentStatePagerAdapter {
-    //TODO: lazily get grams from adapter so as not to crash app (already happens? dont forget to destroy fragments)
     //TODO: have a list of Fragments so that one doesn't have to be built every time??
 
     private List<Gram> grams;

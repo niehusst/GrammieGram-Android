@@ -8,6 +8,8 @@ import com.grammiegram.grammiegram_android.POJO.Gram;
 import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
 import com.grammiegram.grammiegram_android.fragments.BoardPagerFragment;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -15,23 +17,112 @@ import java.util.List;
  * one of the sections/tabs/pages.
  */
 public class BoardFragmentPagerAdapter extends FragmentStatePagerAdapter {
-    //TODO: adapter must implement the logic of destroying grams when they expire!
     //TODO: lazily get grams from adapter so as not to crash app (already happens? dont forget to destroy fragments)
+    //TODO: have a list of Fragments so that one doesn't have to be built every time??
 
     private List<Gram> grams;
+    private int index;
 
     public BoardFragmentPagerAdapter(GramsListResponse grams, FragmentManager fm) {
         super(fm);
-
+        this.index = 0;
         this.grams = grams.getGrams();
     }
 
+    /**
+     * Add a new gram to the adapter
+     *
+     * @param gram - Gram object to add
+     */
+    public void addGram(Gram gram) {
+        grams.add(gram);
+    }
+
+    /**
+     * Delete a Gram from the pager adapter.
+     * Primarily for deleting expired grams.
+     *
+     * @param gram - Gram object to delete
+     */
+    public void removeGram(Gram gram) {
+        grams.remove(gram);
+    }
+
+    /**
+     * Check for expired grams in the adapter. If expired grams exist,
+     * they are removed from the adapter
+     */
+    public void removeExpiredGrams() { //TODO: this removes from adapter, but does this actually count as destroying grams in db?? api?
+        //iterate grams in adapter
+        Iterator<Gram> iter = this.grams.iterator();
+        while(iter.hasNext()) {
+            Gram gram = iter.next();
+            //if current time is passed til, delete gram
+            if(getTime() >= convertTillToTime(gram.getTill())) {
+                iter.remove();
+            }
+        }
+    }
+
+
+    /**
+     * Add new grams from an api response to the gram fragment adapter
+     *
+     * @param responseGrams - list of grams from and api getGrams response
+     */
+    public void addNewGrams(List<Gram> responseGrams) {
+        //get hashmap of adapter grams
+        HashMap<Gram, Integer> adapterGrams = new HashMap<>();
+        for(Gram gram : this.getGrams()) {
+            adapterGrams.put(gram, 1); //arbitrary second value
+        }
+
+        for(Gram gram : responseGrams) {
+            if(!adapterGrams.containsKey(gram)) {
+                this.grams.add(gram);
+            }
+        }
+    }
+
+    /**
+     * Convert the till filed of a gram into a more usable format
+     *
+     * @param till - the expiration date of a gram in String form
+     * @return -
+     */
+    private int convertTillToTime(String till) {
+        //TODO: stub
+    }
+
+
+    /**
+     * Use java.time to get the current date and time in a usable format
+     *
+     * @return - the current date and time in one variable
+     */
+    private int getTime() {
+        //TODO: stub
+    }
+
+    /**
+     * Get the list of grams containted by this adapter
+     * @return - list of grams
+     */
+    public List<Gram> getGrams() {
+        return this.grams;
+    }
+
+    /**
+     * Get the fragment from the adapter at index position
+     *
+     * @param position - index of fragment to get from adapter
+     * @return - the fragment at index position
+     */
     @Override
     public Fragment getItem(int position) {
         // getItem is called to instantiate the fragment for the given page.
-        // Return a BoardPagerFragment.
-        Gram gram = this.grams.get(position);
-        return BoardPagerFragment.newInstance(gram);
+        // Return a BoardPagerFragment that represents the gram at position.
+        return BoardPagerFragment.newInstance(this.grams.get(position));
     }
 
     /**
@@ -45,6 +136,32 @@ public class BoardFragmentPagerAdapter extends FragmentStatePagerAdapter {
             return 0;
         else
             return this.grams.size();
+    }
+
+    /**
+     * Get the gram fragment following the current one. Circularly loops from back
+     * to front if end of adapter list is reached.
+     */
+    public Fragment getNext() {
+        if(this.index == this.grams.size()-1)
+            index = 0;
+        else
+            index++;
+
+        return getItem(index);
+    }
+
+    /**
+     * Get the gram fragment prior to the current one. Circularly loops from front
+     * to back if start of adapter list is reached.
+     */
+    public Fragment getPrev() {
+        if(this.index == 0)
+            index = this.grams.size()-1;
+        else
+            index--;
+
+        return getItem(index);
     }
 }
 

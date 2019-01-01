@@ -1,5 +1,7 @@
 package com.grammiegram.grammiegram_android.POJO;
 
+import android.support.annotation.Nullable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -99,5 +101,23 @@ public class Gram {
 
     public void setMinute(Integer minute) {
         this.minute = minute;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        try {
+            Gram gram = (Gram) obj;
+            //Grams are the same if they have the exact same
+            return  this.hashCode() == gram.hashCode();
+        } catch(ClassCastException objNotGram) {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        StringBuilder builder = new StringBuilder(this.year);
+        builder.append(this.month).append(this.day).append(this.hour).append(this.minute);
+        return Integer.parseInt(builder.toString());
     }
 }

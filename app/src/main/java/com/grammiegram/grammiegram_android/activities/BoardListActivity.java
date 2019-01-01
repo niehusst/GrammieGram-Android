@@ -188,8 +188,8 @@ public class BoardListActivity extends AppCompatActivity implements
         settingsFrag.setVisibility(View.VISIBLE);
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_right, R.anim.slide_in_right, R.anim.slide_out_right);
-                //R.animator.slide_in, R.animator.slide_out, R.animator.slide_in, R.animator.slide_out);
+        transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_right,
+                R.anim.slide_in_right, R.anim.slide_out_right);
         transaction.replace(R.id.board_list_container, SettingsFragment.newInstance());
         transaction.addToBackStack(null);
         transaction.commit();

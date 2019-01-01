@@ -15,6 +15,9 @@ import com.grammiegram.grammiegram_android.interfaces.ItemClickListener;
 
 import java.util.List;
 
+/**
+ * Custom adapter that handles holding board info in a RecyclerView
+ */
 public class BoardListRecyclerAdapter extends RecyclerView.Adapter<BoardListRecyclerAdapter.ViewHolder> {
 
     private List<Board> boardList;

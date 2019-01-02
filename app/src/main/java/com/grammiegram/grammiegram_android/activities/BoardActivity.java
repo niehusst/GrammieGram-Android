@@ -27,6 +27,7 @@ import com.grammiegram.grammiegram_android.adapters.BoardFragmentPagerAdapter;
 import com.grammiegram.grammiegram_android.fragments.SettingsFragment;
 import com.grammiegram.grammiegram_android.interfaces.APIResponse;
 import com.grammiegram.grammiegram_android.interfaces.CallBack;
+import com.grammiegram.grammiegram_android.interfaces.OnGramFragmentClickListener;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,7 +39,7 @@ import okhttp3.ResponseBody;
  * Utilizes fragments containing autoresizeing text views to display a gram. A pager
  * adapter is used to manage gram holding fragments.
  */
-public class BoardActivity extends AppCompatActivity implements CallBack {
+public class BoardActivity extends AppCompatActivity implements CallBack, OnGramFragmentClickListener {
     //TODO: make set landscape rotation and prevent falling asleep
     //TODO: where is framgemtn manager that is acutally lanuching first frag??
 
@@ -134,31 +135,18 @@ public class BoardActivity extends AppCompatActivity implements CallBack {
      * @return - option selection
      */
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) { //TODO: get rid of this?? or add a button to click on action bar
         int id = item.getItemId();
         //add handling of button click here if we decide to add buttons to app bar
         return super.onOptionsItemSelected(item);
     }
 
-    @OnClick(R.id.btn_right)
-    public void nextGram() {
-        FragmentManager manager = getSupportFragmentManager();
-
-        //delete old fragment
-        manager.popBackStack();
-
-        //setup new fragment
-        Fragment nextGram = pagerAdapter.getNext();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right,
-                R.anim.slide_in_left, R.anim.slide_out_right);
-        transaction.replace(R.id.container, nextGram);
-        transaction.addToBackStack(null);
-        transaction.commit();
-    }
-
-    @OnClick(R.id.btn_left)
-    public void prevGram() {
+    /**
+     * Load the previous gram from the fragment state pager adapter and
+     * remove the current one.
+     */
+    @Override
+    public void onLeftClick() {
         FragmentManager manager = getSupportFragmentManager();
 
         //delete old fragment
@@ -174,22 +162,44 @@ public class BoardActivity extends AppCompatActivity implements CallBack {
         transaction.commit();
     }
 
+    /**
+     * Load the next gram from the fragment state pager adapter and
+     * remove the current one.
+     */
+    @Override
+    public void onRightClick() {
+        FragmentManager manager = getSupportFragmentManager();
+
+        //delete old fragment
+        manager.popBackStack();
+
+        //setup new fragment
+        Fragment nextGram = pagerAdapter.getNext();
+        FragmentTransaction transaction = manager.beginTransaction();
+        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right,
+                R.anim.slide_in_left, R.anim.slide_out_right);
+        transaction.replace(R.id.container, nextGram);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+
 
     /**                API getGrams response callbacks                 */
     @Override
     public void onSuccess(APIResponse response) {
         //TODO: when a new gram comes in, do a linear check through the new messages, adding it to the adapter if it's new (job of update service?)
+        //put the addNewGrams method in here?
     }
 
     @Override
     public void onNetworkError(String error) {
-        //TODO: maybe not do this since there will be an api call every 10 secs checking for new grams?
         Toast.makeText(this, "Network Error", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onServerError(int code, ResponseBody body) {
-        //TODO: maybe not do this since there will be an api call every 10 secs checking for new grams?
-        Toast.makeText(this, "Server Error", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, code + "Server Error", Toast.LENGTH_SHORT).show();
     }
+
 }

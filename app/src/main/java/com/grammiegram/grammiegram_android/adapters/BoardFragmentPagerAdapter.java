@@ -91,6 +91,7 @@ public class BoardFragmentPagerAdapter extends FragmentStatePagerAdapter {
      */
     private int convertTillToTime(String till) {
         //TODO: stub
+        return 0;
     }
 
 
@@ -101,6 +102,7 @@ public class BoardFragmentPagerAdapter extends FragmentStatePagerAdapter {
      */
     private int getTime() {
         //TODO: stub
+        return 0;
     }
 
     /**

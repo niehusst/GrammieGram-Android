@@ -2,15 +2,19 @@ package com.grammiegram.grammiegram_android.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.grammiegram.grammiegram_android.POJO.Gram;
 import com.grammiegram.grammiegram_android.R;
+import com.grammiegram.grammiegram_android.interfaces.OnGramFragmentClickListener;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class BoardPagerFragment extends Fragment {
 
@@ -28,6 +32,15 @@ public class BoardPagerFragment extends Fragment {
     private int hour;
     private int minute;
 
+    private OnGramFragmentClickListener mListener;
+
+    //views
+    @BindView(R.id.btn_left)
+    Button left;
+    @BindView(R.id.btn_right)
+    Button right;
+    @BindView(R.id.gram_message)
+    TextView gramMessage;
 
     //required empty constructor
     public BoardPagerFragment() {}
@@ -60,7 +73,9 @@ public class BoardPagerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle gramData) {
         View rootView = inflater.inflate(R.layout.fragment_board, container, false);
-        TextView textView = (TextView) rootView.findViewById(R.id.gram_message);
+
+        ButterKnife.bind(rootView);
+
         //unpack bundle
         this.senderFirstName = gramData.getString("SENDER");
         this.message = gramData.getString("MESSAGE");
@@ -71,8 +86,29 @@ public class BoardPagerFragment extends Fragment {
         this.hour = gramData.getInt("HOUR");
         this.minute = gramData.getInt("MINUTE");
 
-        textView.setText(this.message);
+        gramMessage.setText(this.message);
         return rootView;
     }
+
+    /**
+     * Handle gram traversal click for next gram
+     */
+    @OnClick(R.id.btn_right)
+    private void rightClick() {
+        if(mListener != null) {
+            mListener.onRightClick();
+        }
+    }
+
+    /**
+     * Handle gram traversal click for previous gram
+     */
+    @OnClick(R.id.btn_left)
+    private void leftClick() {
+        if(mListener != null) {
+            mListener.onLeftClick();
+        }
+    }
+
 }
 

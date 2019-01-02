@@ -13,7 +13,6 @@ import okhttp3.ResponseBody;
 /**
  * A service that asynchronously handles checking for new grams and deleting
  * expired ones from the fragment state pager adapter.
- * TODO: while(1) { if(apiresponse.boardUpdateNeeded()) { do stuff }}
  */
 public class BoardUpdateService extends AsyncTask implements CallBack {
 
@@ -42,6 +41,7 @@ public class BoardUpdateService extends AsyncTask implements CallBack {
     @Override
     protected Object doInBackground(Object[] objects) {
         try {
+            //run service while board is open
             while (true) {
                 wait(1000 * CHECK_RATE_SECONDS);
                 //destroy expired grams
@@ -63,11 +63,13 @@ public class BoardUpdateService extends AsyncTask implements CallBack {
 
 
     private String getDate() {
-
+        //TODO: stub
+        return null;
     }
 
     private String getTime() {
-
+        //todo: stub
+        return null;
     }
 
 

@@ -16,9 +16,11 @@
         <activity android:name=".activities.BoardListActivity" />
         <activity
             android:name=".activities.BoardActivity"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:keepScreenOn="true"
+            android:screenOrientation="landscape"/> <!-- force landscape orientation for boards -->
         <activity android:name=".activities.SignInActivity">
-            <!-- Login is launching activity (immediatly launches others if token is already present) -->
+            <!-- Login is launching activity (immediately launches others if token is already present) -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

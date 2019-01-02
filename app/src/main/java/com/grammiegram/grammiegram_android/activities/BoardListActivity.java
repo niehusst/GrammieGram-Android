@@ -30,6 +30,7 @@ import com.grammiegram.grammiegram_android.fragments.SettingsFragment;
 import com.grammiegram.grammiegram_android.interfaces.APIResponse;
 import com.grammiegram.grammiegram_android.interfaces.CallBack;
 import com.grammiegram.grammiegram_android.interfaces.ItemClickListener;
+import com.grammiegram.grammiegram_android.interfaces.OnFragmentInteractionListener;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,7 +38,7 @@ import butterknife.OnClick;
 import okhttp3.ResponseBody;
 
 public class BoardListActivity extends AppCompatActivity implements
-        CallBack, SettingsFragment.OnFragmentInteractionListener, ItemClickListener {
+        CallBack, OnFragmentInteractionListener, ItemClickListener {
 
     private GrammieGramService api;
 

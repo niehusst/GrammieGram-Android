@@ -94,7 +94,7 @@ public class BoardPagerFragment extends Fragment {
      * Handle gram traversal click for next gram
      */
     @OnClick(R.id.btn_right)
-    private void rightClick() {
+    public void rightClick() {
         if(mListener != null) {
             mListener.onRightClick();
         }
@@ -104,7 +104,7 @@ public class BoardPagerFragment extends Fragment {
      * Handle gram traversal click for previous gram
      */
     @OnClick(R.id.btn_left)
-    private void leftClick() {
+    public void leftClick() {
         if(mListener != null) {
             mListener.onLeftClick();
         }

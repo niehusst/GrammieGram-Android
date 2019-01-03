@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,18 +59,13 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
     @BindView(R.id.time)
     TextView time;
 
-    //gram fragment views
-    @BindView(R.id.btn_left)
-    Button left;
-    @BindView(R.id.btn_right)
-    Button right;
-    @BindView(R.id.gram_message)
-    TextView gramMessage;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
+
+        //prevent the device from falling asleep while BoardActivity is open
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

@@ -41,7 +41,6 @@ import okhttp3.ResponseBody;
  * adapter is used to manage gram holding fragments.
  */
 public class BoardActivity extends AppCompatActivity implements CallBack, OnGramFragmentClickListener {
-    //TODO: make set landscape rotation and prevent falling asleep
     //TODO: where is framgemtn manager that is acutally lanuching first frag??
 
     /*
@@ -66,9 +65,6 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
 
         //prevent the device from falling asleep while BoardActivity is open
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         ButterKnife.bind(this);
 
@@ -104,38 +100,16 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
             transaction.commit();
         }
 
-        //TODO: make text setting function for clock and date (while doing checknew service?)
-
-        //TODO: make pager automatically rotate every 30? seconds. (try to do from prev rotate, not just time)
-        //TODO: make another async task that cycles through grams???
-    }
-
-
-    /**
-     * inflate app bar
-     *
-     * @param menu - the menu xml
-     * @return - creation status
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_board, menu);
-        return true;
     }
 
     /**
-     * Handle clicks to items in appbar menu
-     *
-     * @param item - menu item that was clicked
-     * @return - option selection
+     * Prevent back press from destroying open grams fragment
      */
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) { //TODO: get rid of this?? or add a button to click on action bar
-        int id = item.getItemId();
-        //add handling of button click here if we decide to add buttons to app bar
-        return super.onOptionsItemSelected(item);
+    public void onBackPressed() {
+        //TODO: popup message asking if they really want to close board?
     }
+
 
     /**
      * Load the previous gram from the fragment state pager adapter and

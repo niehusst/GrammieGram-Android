@@ -9,7 +9,7 @@
     android:fitsSystemWindows="true"
     tools:context="com.grammiegram.grammiegram_android.activities.BoardActivity">
 
-    <android.support.design.widget.AppBarLayout
+    <!--<android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -25,7 +25,7 @@
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:title="@string/app_name" />
 
-    </android.support.design.widget.AppBarLayout>
+    </android.support.design.widget.AppBarLayout>-->
 
 
     <!-- container for paging gram fragments -->
@@ -33,7 +33,7 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintTop_toBottomOf="@id/appbar"/>
+        />
 
     <ImageView
         android:id="@+id/no_grams_logo"
@@ -43,7 +43,7 @@
         android:src="@drawable/vector_logo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appbar" />
+        />
 
 
     <TextView
@@ -62,7 +62,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/no_grams_logo"
-        app:layout_constraintTop_toBottomOf="@+id/appbar" />
+        />
 
     <TextView
         android:id="@+id/date"

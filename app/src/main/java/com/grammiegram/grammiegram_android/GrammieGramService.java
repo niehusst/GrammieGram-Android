@@ -1,6 +1,11 @@
 package com.grammiegram.grammiegram_android;
 
+import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.grammiegram.grammiegram_android.POJO.BoardListResponse;
+import com.grammiegram.grammiegram_android.POJO.CheckNewResponse;
 import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
 import com.grammiegram.grammiegram_android.POJO.LoginResponse;
 import com.grammiegram.grammiegram_android.POJO.SettingsResponse;
@@ -22,6 +27,7 @@ public class GrammieGramService {
     private CallBack callBack;
     public static String BASE_URL = "https://grammiegram.com/api/";
 
+
     /**
      * Make the retrofit api objects that will be used to call the GrammieGram API
      *
@@ -29,9 +35,12 @@ public class GrammieGramService {
      *                 that will handle the responses from the api.
      */
     public GrammieGramService(CallBack callBack) {
+        // make json reader lenient with json syntax
+        Gson gson = new GsonBuilder().setLenient().create();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
         this.api = retrofit.create(GrammieGramAPI.class);
         this.callBack = callBack;
@@ -39,10 +48,12 @@ public class GrammieGramService {
 
     /**
      * Handling of the API response when getBoards is called
+     *
+     * @param auth - the authentication token
      */
-    public void getBoards() {
+    public void getBoards(String auth) {
         //get the api call object
-        Call<BoardListResponse> call = api.getBoards();
+        Call<BoardListResponse> call = api.getBoards(auth);
 
         //execute asynchronously to avoid hogging UI thread
         call.enqueue(new Callback<BoardListResponse>() {
@@ -69,6 +80,9 @@ public class GrammieGramService {
 
     /**
      * Handling of the API response when login is called
+     *
+     * @param username - username to login to the database with for an existing account
+     * @param password - password to login to the database with for an existing account
      */
     public void login(String username, String password) {
         //get the api call object
@@ -99,10 +113,13 @@ public class GrammieGramService {
 
     /**
      * Handling of the API response when getGrams is called
+     *
+     * @param auth - the authentication token for logged in user
+     * @param boardDisplayName - the board to get grams for
      */
-    public void getGrams() {
+    public void getGrams(String auth, String boardDisplayName) {
         //get the api call object
-        Call<GramsListResponse> call = api.getGrams();
+        Call<GramsListResponse> call = api.getGrams(auth, boardDisplayName);
 
         //execute asynchronously to avoid hogging UI thread
         call.enqueue(new Callback<GramsListResponse>() {
@@ -129,10 +146,14 @@ public class GrammieGramService {
 
     /**
      * Handling of the API response when updateSettings is called
+     *
+     * @param auth - the authentication token for the logged in user
+     * @param audioNotification - whether or not to have active audio notifications
+     * @param profanityFilter - whether or not to filter profanity
      */
-    public void updateSettings(int fontSize, boolean audioNotification, boolean profanityFilter) {
+    public void updateSettings(String auth, boolean audioNotification, boolean profanityFilter) {
         //get the api call object
-        Call<SettingsResponse> call = api.updateSettings(fontSize, audioNotification, profanityFilter);
+        Call<SettingsResponse> call = api.updateSettings(auth, audioNotification, profanityFilter);
 
         //execute asynchronously to avoid hogging UI thread
         call.enqueue(new Callback<SettingsResponse>() {
@@ -151,6 +172,39 @@ public class GrammieGramService {
 
             @Override
             public void onFailure(Call<SettingsResponse> call, Throwable t) {
+                //network error, unable to connect with the server for any reason
+                callBack.onNetworkError(t.toString());
+            }
+        });
+    }
+
+    /**
+     * Check if the board needs to update the grams it is displaying
+     *
+     * @param auth - the authentication token for the logged in user
+     * @param boardDisplayName - display name of the board to check grams for
+     */
+    public void checkNewGrams(String auth, String boardDisplayName) {
+        //get the api call object
+        Call<CheckNewResponse> call = api.checkNewGrams(auth, boardDisplayName);
+
+        //execute asynchronously to avoid hogging UI thread
+        call.enqueue(new Callback<CheckNewResponse>() {
+
+            @Override
+            public void onResponse(Call<CheckNewResponse> call, Response<CheckNewResponse> response) {
+                //handle api response
+                if (response.isSuccessful()) {
+                    callBack.onSuccess(response.body());
+                } else {
+                    callBack.onServerError(response.code(), response.errorBody());
+                    // must close response to avoid memory leaks
+                    response.errorBody().close();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CheckNewResponse> call, Throwable t) {
                 //network error, unable to connect with the server for any reason
                 callBack.onNetworkError(t.toString());
             }

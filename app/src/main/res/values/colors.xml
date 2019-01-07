@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="blue">#42a5f5</color>
+    <color name="birdRed">#DF0000</color>
+    <color name="grammiegramRed">#9B0910</color>
+    <color name="grey">#BFBFBF</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="lightBlue">#C7E1F6</color>
+    <color name="darkGrey">#3e3e3e</color>
+
     <color name="colorPrimary">#9B0910</color>
     <color name="colorPrimaryDark">#730910</color>
     <color name="colorAccent">#C7E1F6</color>
+
 </resources>

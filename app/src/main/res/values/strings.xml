@@ -32,5 +32,6 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="no_account"><a href="https://grammiegram.com/signup">No account? Sign up!</a></string>
+    <string name="no_account"><a href="https://grammiegram.com/signup/">No account? Sign up!</a></string>
+    <string name="forgot"><a href="https://grammiegram.com/forgot_password/">Forgot your password?</a></string>
 </resources>

@@ -8,7 +8,8 @@
     tools:context="com.grammiegram.grammiegram_android.fragments.BoardPagerFragment">
 
     <!-- TODO: add buttons images android:src="@android:drawable/arrow_up_float"
-    TODO: word wrapping so words aren't split???-->
+    TODO: word wrapping so words aren't split???
+    TODO: make bird image have less empty space on smaller screens -->
 
 
     <TextView

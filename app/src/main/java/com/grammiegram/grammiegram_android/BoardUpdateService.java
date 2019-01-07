@@ -1,5 +1,6 @@
 package com.grammiegram.grammiegram_android;
 
+import android.app.job.JobService;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
@@ -14,9 +15,9 @@ import okhttp3.ResponseBody;
  * A service that asynchronously handles checking for new grams and deleting
  * expired ones from the fragment state pager adapter.
  */
-public class BoardUpdateService extends AsyncTask implements CallBack {
+public class BoardUpdateService implements CallBack, Runnable {
 
-    private static final int CHECK_RATE_SECONDS = 10;
+    public static final int CHECK_RATE_SECONDS = 10;
     private final String BOARD_DISPLAY_NAME;
 
     private BoardFragmentPagerAdapter adapter;
@@ -38,32 +39,26 @@ public class BoardUpdateService extends AsyncTask implements CallBack {
         this.sharedPreferences = prefs;
     }
 
+    /**
+     * Work to run asynchronously in background thread. Removes expired grams and checks
+     * for new grams to add to adapter.
+     */
     @Override
-    protected Object doInBackground(Object[] objects) {
-        try {
-            //run service while board is open
-            while (true) {
-                wait(1000 * CHECK_RATE_SECONDS);
-                //destroy expired grams
-                this.adapter.removeExpiredGrams();
+    public void run() {
 
-                //check new
-                checkNewAPI.checkNewGrams(sharedPreferences.getString("auth_token", "DEFUALT"),
-                        BOARD_DISPLAY_NAME);
+        //destroy expired grams
+        this.adapter.removeExpiredGrams();
 
-                //TODO: also update time and date text views on board
+        //check new
+        checkNewAPI.checkNewGrams(sharedPreferences.getString("auth_token", "DEFAULT"),
+                BOARD_DISPLAY_NAME);
 
-            }
-        } catch (Exception e) {
-            //TODO: this is definitly not how to do this
-        }
-
-        return null;
+        //TODO: also update time and date text views on board (make this ANOTHER seperate background task?)
     }
 
 
     private String getDate() {
-        //TODO: stub
+        //TODO: stub put these elswehere?
         return null;
     }
 
@@ -71,6 +66,7 @@ public class BoardUpdateService extends AsyncTask implements CallBack {
         //todo: stub
         return null;
     }
+
 
 
     /**                API checkNewGrams response callbacks                 */
@@ -92,4 +88,5 @@ public class BoardUpdateService extends AsyncTask implements CallBack {
     public void onServerError(int code, ResponseBody body) {
         gramsListCallBack.onServerError(code, body);
     }
+
 }

@@ -1,5 +1,6 @@
 package com.grammiegram.grammiegram_android.fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -31,6 +32,8 @@ public class BoardPagerFragment extends Fragment {
     private int day;
     private int hour;
     private int minute;
+
+    private long fragmentCreationTime;
 
     private OnGramFragmentClickListener mListener;
 
@@ -72,6 +75,10 @@ public class BoardPagerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle gramData) {
+        //get fragment creation time
+        this.fragmentCreationTime = System.currentTimeMillis();
+
+        //inflate layout
         View rootView = inflater.inflate(R.layout.fragment_board, container, false);
 
         ButterKnife.bind(rootView);
@@ -86,7 +93,11 @@ public class BoardPagerFragment extends Fragment {
         this.hour = gramData.getInt("HOUR");
         this.minute = gramData.getInt("MINUTE");
 
+        //set the message of the gram
         gramMessage.setText(this.message);
+
+        //TODO: async task that will continuously check if currTimeMillis >= fragmentCreateTime+30000. then rightCLick()
+
         return rootView;
     }
 
@@ -110,5 +121,30 @@ public class BoardPagerFragment extends Fragment {
         }
     }
 
+    /**
+     * Set the context of BoardActivity as the OnGramFragmentListener required
+     * to handle adapter traversal clicks.
+     *
+     * @param context - the BoardActivity context that implements OnGramFragmentListener
+     */
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof OnGramFragmentClickListener) {
+            this.mListener = (OnGramFragmentClickListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnGramFragmentClickListener");
+        }
+    }
+
+    /**
+     * Prevent memory leaks by releasing the context reference to be garbage collected
+     */
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
 }
 

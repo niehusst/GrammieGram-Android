@@ -1,6 +1,10 @@
 package com.grammiegram.grammiegram_android.activities;
 
+import android.app.job.JobScheduler;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -30,6 +34,13 @@ import com.grammiegram.grammiegram_android.interfaces.APIResponse;
 import com.grammiegram.grammiegram_android.interfaces.CallBack;
 import com.grammiegram.grammiegram_android.interfaces.OnGramFragmentClickListener;
 
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -52,6 +63,9 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
     //The {@link ViewPager} that will host the section contents.
     private ViewPager mViewPager;
 
+    //thread pool handler for background service runnables
+    private ScheduledExecutorService pool;
+
     //no grams views
     @BindView(R.id.date)
     TextView date;
@@ -69,7 +83,7 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
         ButterKnife.bind(this);
 
         // Get board data to load from intent
-        Board board = (Board) getIntent().getParcelableExtra("BOARD");
+        final Board board = (Board) getIntent().getParcelableExtra("BOARD");
 
         // Create the adapter that will return a fragment for each gram
         GramsListResponse g = new GramsListResponse(); //TODO: delete this debugging stuff
@@ -79,11 +93,14 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(pagerAdapter);
 
-        // Set up and start the async update service
+        // Set up runnable tasks to update board and grams
         SharedPreferences prefs = getPreferences(MODE_PRIVATE);
-        BoardUpdateService service = new BoardUpdateService(pagerAdapter, this, board.getBoardDisplayName(), prefs);
-        service.execute();
+        BoardUpdateService gramFetchService = new BoardUpdateService(pagerAdapter, this, board.getBoardDisplayName(), prefs);
+        //ScheduledThreadPoolExecutor to periodically call async services
+        pool = Executors.newScheduledThreadPool(2);
+        pool.scheduleAtFixedRate(gramFetchService, 0, BoardUpdateService.CHECK_RATE_SECONDS, TimeUnit.SECONDS);
 
+        //handle UI setup depending on whether or not there are grams to show
         if(pagerAdapter.getCount() == 0) {
             //set up no grams views
             //TODO: set date and time for no grams views (do in service update)
@@ -107,7 +124,7 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
      */
     @Override
     public void onBackPressed() {
-        //TODO: popup message asking if they really want to close board?
+        //TODO: popup message asking if they really want to close board? launch board list
     }
 
 
@@ -153,13 +170,23 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
         transaction.commit();
     }
 
-
+    /**
+     * Clean up this activity by stopping all pending Runnables in thread pools
+     */
+    @Override
+    protected void onDestroy() {
+        if(pool != null) {
+            pool.shutdownNow();
+            pool = null;
+        }
+        super.onDestroy();
+    }
 
     /**                API getGrams response callbacks                 */
     @Override
     public void onSuccess(APIResponse response) {
         //TODO: when a new gram comes in, do a linear check through the new messages, adding it to the adapter if it's new (job of update service?)
-        //put the addNewGrams method in here?
+        //put the addNewGrams method from update service in here?
     }
 
     @Override

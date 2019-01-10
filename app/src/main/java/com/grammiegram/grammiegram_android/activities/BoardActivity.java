@@ -1,49 +1,39 @@
 package com.grammiegram.grammiegram_android.activities;
 
-import android.app.job.JobScheduler;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
-import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.grammiegram.grammiegram_android.BoardUpdateService;
-import com.grammiegram.grammiegram_android.GrammieGramService;
+import com.grammiegram.grammiegram_android.services.BoardUpdateService;
 import com.grammiegram.grammiegram_android.POJO.Board;
-import com.grammiegram.grammiegram_android.POJO.Gram;
 import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
 import com.grammiegram.grammiegram_android.R;
 import com.grammiegram.grammiegram_android.adapters.BoardFragmentPagerAdapter;
-import com.grammiegram.grammiegram_android.fragments.SettingsFragment;
 import com.grammiegram.grammiegram_android.interfaces.APIResponse;
 import com.grammiegram.grammiegram_android.interfaces.CallBack;
 import com.grammiegram.grammiegram_android.interfaces.OnGramFragmentClickListener;
+import com.grammiegram.grammiegram_android.services.GrammieGramService;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import okhttp3.ResponseBody;
 
 /**
@@ -52,8 +42,8 @@ import okhttp3.ResponseBody;
  * adapter is used to manage gram holding fragments.
  */
 public class BoardActivity extends AppCompatActivity implements CallBack, OnGramFragmentClickListener {
-    //TODO: where is framgemtn manager that is acutally lanuching first frag??
-
+    //TODO: does it lanuch first frag if it starts with no grams??
+    //TODO: add api call for get current settings
     /*
      * The {@link android.support.v4.app.FragmentStatePagerAdapter} that will provide
      * fragments for each of the sections that hold grams.
@@ -63,8 +53,10 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
     //The {@link ViewPager} that will host the section contents.
     private ViewPager mViewPager;
 
-    //thread pool handler for background service runnables
+    //thread pool and handler for background service runnables
     private ScheduledExecutorService pool;
+    private Handler handler = new Handler();
+    private Runnable dateTimeService = new DateTimeUpdateService();
 
     //no grams views
     @BindView(R.id.date)
@@ -86,26 +78,20 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
         final Board board = (Board) getIntent().getParcelableExtra("BOARD");
 
         // Create the adapter that will return a fragment for each gram
-        GramsListResponse g = new GramsListResponse(); //TODO: delete this debugging stuff
-        pagerAdapter = new BoardFragmentPagerAdapter(g, getSupportFragmentManager());
+        pagerAdapter = new BoardFragmentPagerAdapter(getSupportFragmentManager());
+        //do initial fill of adapter
+        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+        GrammieGramService api = new GrammieGramService(this);
+        api.getGrams(prefs.getString("auth_token", "DEFAULT"), board.getBoardDisplayName());
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(pagerAdapter);
 
-        // Set up runnable tasks to update board and grams
-        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
-        BoardUpdateService gramFetchService = new BoardUpdateService(pagerAdapter, this, board.getBoardDisplayName(), prefs);
-        //ScheduledThreadPoolExecutor to periodically call async services
-        pool = Executors.newScheduledThreadPool(2);
-        pool.scheduleAtFixedRate(gramFetchService, 0, BoardUpdateService.CHECK_RATE_SECONDS, TimeUnit.SECONDS);
-
         //handle UI setup depending on whether or not there are grams to show
         if(pagerAdapter.getCount() == 0) {
-            //set up no grams views
-            //TODO: set date and time for no grams views (do in service update)
-            date.setText(getString(R.string.date, "date date"));
-            time.setText(getString(R.string.time, "2am"));
+            //TODO: set up no grams views?
+
         } else {
             //TODO: set up grams in fragment pager (other views to gone?)
             FragmentManager manager = getSupportFragmentManager();
@@ -117,6 +103,14 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
             transaction.commit();
         }
 
+        // Set up runnable tasks to update board and grams
+        BoardUpdateService gramFetchService = new BoardUpdateService(pagerAdapter, this, board.getBoardDisplayName(), prefs);
+        //ScheduledThreadPoolExecutor to periodically check for new grams
+        pool = Executors.newScheduledThreadPool(2);
+        pool.scheduleAtFixedRate(gramFetchService, 0, BoardUpdateService.CHECK_RATE_SECONDS, TimeUnit.SECONDS);
+        //update clock on UI thread (TODO: check if too blocking of user interaction)
+        handler.post(dateTimeService);
+
     }
 
     /**
@@ -125,6 +119,7 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
     @Override
     public void onBackPressed() {
         //TODO: popup message asking if they really want to close board? launch board list
+        Toast.makeText(this, "Are you sure you want to leave the board?", Toast.LENGTH_SHORT).show();
     }
 
 
@@ -182,21 +177,83 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
         super.onDestroy();
     }
 
+    /**
+     * Pause the date and time updates to the UI thread when activity
+     * leaves focus.
+     */
+    @Override
+    protected void onPause() {
+        handler.removeCallbacks(dateTimeService);
+        super.onPause();
+    }
+
+    /**
+     * Restart date time updates to the UI thread when activity comes back into focus.
+     */
+    @Override
+    protected void onResume() {
+        handler.post(dateTimeService);
+        super.onResume();
+    }
+
     /**                API getGrams response callbacks                 */
     @Override
     public void onSuccess(APIResponse response) {
-        //TODO: when a new gram comes in, do a linear check through the new messages, adding it to the adapter if it's new (job of update service?)
-        //put the addNewGrams method from update service in here?
+        //play notification if audio preference is activated
+        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+        if(prefs.getBoolean("audio_notifications", false)) { //TODO: we have to fetch and add these values to prefs before getting here; they may have already set settings on the website
+            //play media selected by user
+
+        }
+
+        //add grams from response to the adapter if grams are new
+        GramsListResponse gramList = (GramsListResponse) response;
+        this.pagerAdapter.addNewGrams(gramList.getGrams());
     }
 
     @Override
     public void onNetworkError(String error) {
-        Toast.makeText(this, "Network Error", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.wifi_error), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onServerError(int code, ResponseBody body) {
-        Toast.makeText(this, code + "Server Error", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, code + getString(R.string.server_error), Toast.LENGTH_SHORT).show();
     }
+
+
+    /**
+     * Inner class for async updating date and time TextViews. Must be an inner class to have access
+     * to the views it needs to update.
+     */
+    class DateTimeUpdateService implements Runnable {
+
+        //text views that must be updated
+        TextView date;
+        TextView time;
+
+        public DateTimeUpdateService() {
+            this.date = findViewById(R.id.date);
+            this.time = findViewById(R.id.time);
+        }
+
+        /**
+         * Work to do in a separate background thread. Computes the Strings for
+         * time and date, saving them in class fields.
+         */
+        @Override
+        public void run() {
+            //update clock text views
+            DateFormat timeFormat = new SimpleDateFormat("h:mm a", Locale.US);
+            DateFormat dateFormat = new SimpleDateFormat("EEE, MMM d yyyy", Locale.US);
+            Calendar cal = Calendar.getInstance();
+            this.date.setText(dateFormat.format(cal.getTime()));
+            this.time.setText(timeFormat.format(cal.getTime()));
+
+            //set to run again in 1 second
+            handler.postDelayed(this, 1000);
+        }
+    }
+
 
 }

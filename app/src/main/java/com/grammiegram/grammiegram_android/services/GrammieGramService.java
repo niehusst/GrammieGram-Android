@@ -1,6 +1,4 @@
-package com.grammiegram.grammiegram_android;
-
-import android.util.Log;
+package com.grammiegram.grammiegram_android.services;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -8,7 +6,7 @@ import com.grammiegram.grammiegram_android.POJO.BoardListResponse;
 import com.grammiegram.grammiegram_android.POJO.CheckNewResponse;
 import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
 import com.grammiegram.grammiegram_android.POJO.LoginResponse;
-import com.grammiegram.grammiegram_android.POJO.SettingsResponse;
+import com.grammiegram.grammiegram_android.POJO.UpdateSettingsResponse;
 import com.grammiegram.grammiegram_android.interfaces.CallBack;
 import com.grammiegram.grammiegram_android.interfaces.GrammieGramAPI;
 
@@ -153,13 +151,13 @@ public class GrammieGramService {
      */
     public void updateSettings(String auth, boolean audioNotification, boolean profanityFilter) {
         //get the api call object
-        Call<SettingsResponse> call = api.updateSettings(auth, audioNotification, profanityFilter);
+        Call<UpdateSettingsResponse> call = api.updateSettings(auth, audioNotification, profanityFilter);
 
         //execute asynchronously to avoid hogging UI thread
-        call.enqueue(new Callback<SettingsResponse>() {
+        call.enqueue(new Callback<UpdateSettingsResponse>() {
 
             @Override
-            public void onResponse(Call<SettingsResponse> call, Response<SettingsResponse> response) {
+            public void onResponse(Call<UpdateSettingsResponse> call, Response<UpdateSettingsResponse> response) {
                 //handle api response
                 if (response.isSuccessful()) {
                     callBack.onSuccess(response.body());
@@ -171,7 +169,7 @@ public class GrammieGramService {
             }
 
             @Override
-            public void onFailure(Call<SettingsResponse> call, Throwable t) {
+            public void onFailure(Call<UpdateSettingsResponse> call, Throwable t) {
                 //network error, unable to connect with the server for any reason
                 callBack.onNetworkError(t.toString());
             }

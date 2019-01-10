@@ -14,13 +14,12 @@ import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.filters.MediumTest;
-import android.util.Log;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.grammiegram.grammiegram_android.activities.BoardActivity;
 import com.grammiegram.grammiegram_android.activities.BoardListActivity;
 import com.grammiegram.grammiegram_android.activities.SignInActivity;
+import com.grammiegram.grammiegram_android.services.GrammieGramService;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 

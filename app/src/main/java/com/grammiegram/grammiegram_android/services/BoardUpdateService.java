@@ -1,8 +1,6 @@
-package com.grammiegram.grammiegram_android;
+package com.grammiegram.grammiegram_android.services;
 
-import android.app.job.JobService;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 
 import com.grammiegram.grammiegram_android.POJO.CheckNewResponse;
 import com.grammiegram.grammiegram_android.adapters.BoardFragmentPagerAdapter;
@@ -45,26 +43,12 @@ public class BoardUpdateService implements CallBack, Runnable {
      */
     @Override
     public void run() {
-
         //destroy expired grams
         this.adapter.removeExpiredGrams();
 
         //check new
         checkNewAPI.checkNewGrams(sharedPreferences.getString("auth_token", "DEFAULT"),
                 BOARD_DISPLAY_NAME);
-
-        //TODO: also update time and date text views on board (make this ANOTHER seperate background task?)
-    }
-
-
-    private String getDate() {
-        //TODO: stub put these elswehere?
-        return null;
-    }
-
-    private String getTime() {
-        //todo: stub
-        return null;
     }
 
 

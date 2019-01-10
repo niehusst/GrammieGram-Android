@@ -6,7 +6,7 @@ import com.grammiegram.grammiegram_android.POJO.CheckNewResponse;
 import com.grammiegram.grammiegram_android.POJO.Gram;
 import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
 import com.grammiegram.grammiegram_android.POJO.LoginResponse;
-import com.grammiegram.grammiegram_android.POJO.SettingsResponse;
+import com.grammiegram.grammiegram_android.POJO.UpdateSettingsResponse;
 import com.grammiegram.grammiegram_android.interfaces.GrammieGramAPI;
 
 import java.util.ArrayList;
@@ -107,12 +107,12 @@ public class MockGrammieGramService implements GrammieGramAPI {
      * @param auth - login token
      * @param audioNotification - whether to make sounds for new grams
      * @param profanityFilter - whether to strip profanity from grams
-     * @return - stubbed API SettingsResponse object
+     * @return - stubbed API UpdateSettingsResponse object
      */
     @Override
-    public Call<SettingsResponse> updateSettings(String auth, boolean audioNotification, boolean profanityFilter) {
+    public Call<UpdateSettingsResponse> updateSettings(String auth, boolean audioNotification, boolean profanityFilter) {
         //set stubbed data into response object
-        SettingsResponse settingsResponse =  new SettingsResponse();
+        UpdateSettingsResponse settingsResponse =  new UpdateSettingsResponse();
         settingsResponse.setUpdated(true);
 
         return this.delegate.returningResponse(settingsResponse).updateSettings(auth, audioNotification, profanityFilter);

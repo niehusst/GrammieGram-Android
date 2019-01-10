@@ -21,7 +21,7 @@ import android.widget.TextView;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
-import com.grammiegram.grammiegram_android.GrammieGramService;
+import com.grammiegram.grammiegram_android.services.GrammieGramService;
 import com.grammiegram.grammiegram_android.POJO.Board;
 import com.grammiegram.grammiegram_android.POJO.BoardListResponse;
 import com.grammiegram.grammiegram_android.R;

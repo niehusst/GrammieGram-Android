@@ -4,10 +4,9 @@ import com.grammiegram.grammiegram_android.POJO.BoardListResponse;
 import com.grammiegram.grammiegram_android.POJO.CheckNewResponse;
 import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
 import com.grammiegram.grammiegram_android.POJO.LoginResponse;
-import com.grammiegram.grammiegram_android.POJO.SettingsResponse;
+import com.grammiegram.grammiegram_android.POJO.UpdateSettingsResponse;
 
 import retrofit2.Call;
-import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -21,9 +20,9 @@ public interface GrammieGramAPI {
 
     @FormUrlEncoded
     @POST("update_settings/")
-    Call<SettingsResponse> updateSettings(@Header("Authorization") String auth,
-                                          @Field("audio_notifications") boolean audioNotifications,
-                                          @Field("profanity_filter") boolean profanityFilter);
+    Call<UpdateSettingsResponse> updateSettings(@Header("Authorization") String auth,
+                                                @Field("audio_notifications") boolean audioNotifications,
+                                                @Field("profanity_filter") boolean profanityFilter);
 
     @FormUrlEncoded
     @POST("login/")

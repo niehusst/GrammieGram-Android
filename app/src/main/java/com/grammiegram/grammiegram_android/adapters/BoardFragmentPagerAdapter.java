@@ -8,6 +8,7 @@ import com.grammiegram.grammiegram_android.POJO.Gram;
 import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
 import com.grammiegram.grammiegram_android.fragments.BoardPagerFragment;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -22,10 +23,10 @@ public class BoardFragmentPagerAdapter extends FragmentStatePagerAdapter {
     private List<Gram> grams;
     private int index;
 
-    public BoardFragmentPagerAdapter(GramsListResponse grams, FragmentManager fm) {
+    public BoardFragmentPagerAdapter(FragmentManager fm) {
         super(fm);
         this.index = 0;
-        this.grams = grams.getGrams();
+        this.grams = new ArrayList<>();
     }
 
     /**

@@ -5,7 +5,7 @@ import com.grammiegram.grammiegram_android.POJO.CheckNewResponse;
 import com.grammiegram.grammiegram_android.POJO.ErrorResponse;
 import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
 import com.grammiegram.grammiegram_android.POJO.LoginResponse;
-import com.grammiegram.grammiegram_android.POJO.SettingsResponse;
+import com.grammiegram.grammiegram_android.POJO.UpdateSettingsResponse;
 import com.grammiegram.grammiegram_android.interfaces.GrammieGramAPI;
 
 import org.junit.After;
@@ -186,8 +186,8 @@ public class RetrofitAPITest {
         GrammieGramAPI mockAPI = new MockGrammieGramService(delegate);
 
         //get and execute api call
-        Call<SettingsResponse> update = mockAPI.updateSettings("Token 123", true, true);
-        Response<SettingsResponse> response = update.execute();
+        Call<UpdateSettingsResponse> update = mockAPI.updateSettings("Token 123", true, true);
+        Response<UpdateSettingsResponse> response = update.execute();
 
         //assert response has expected data
         Assert.assertTrue(response.isSuccessful());
@@ -201,8 +201,8 @@ public class RetrofitAPITest {
         GrammieGramAPI mockAPI = new MockGrammieGramServiceError(delegate);
 
         //get and execute api call (for clarity, input has no effect on resulting stubbed outputs)
-        Call<SettingsResponse> update = mockAPI.updateSettings("Token 123", false, false);
-        Response<SettingsResponse> response = update.execute();
+        Call<UpdateSettingsResponse> update = mockAPI.updateSettings("Token 123", false, false);
+        Response<UpdateSettingsResponse> response = update.execute();
 
         //assert response has expected data
         Assert.assertFalse(response.isSuccessful());

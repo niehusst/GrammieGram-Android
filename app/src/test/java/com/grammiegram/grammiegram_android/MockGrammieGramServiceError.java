@@ -7,10 +7,8 @@ import com.grammiegram.grammiegram_android.POJO.CheckNewResponse;
 import com.grammiegram.grammiegram_android.POJO.ErrorResponse;
 import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
 import com.grammiegram.grammiegram_android.POJO.LoginResponse;
-import com.grammiegram.grammiegram_android.POJO.SettingsResponse;
+import com.grammiegram.grammiegram_android.POJO.UpdateSettingsResponse;
 import com.grammiegram.grammiegram_android.interfaces.GrammieGramAPI;
-
-import java.util.ArrayList;
 
 import okhttp3.MediaType;
 import okhttp3.ResponseBody;
@@ -105,10 +103,10 @@ public class MockGrammieGramServiceError implements GrammieGramAPI {
      * @param auth - login token
      * @param audioNotification - whether to make sound when message arrives
      * @param profanityFilter - whether to strip bad words from grams
-     * @return - stubbed API SettingsResponse object
+     * @return - stubbed API UpdateSettingsResponse object
      */
     @Override
-    public Call<SettingsResponse> updateSettings(String auth, boolean audioNotification, boolean profanityFilter) {
+    public Call<UpdateSettingsResponse> updateSettings(String auth, boolean audioNotification, boolean profanityFilter) {
         //set stubbed data into response object
         ErrorResponse error = new ErrorResponse();
 
@@ -129,7 +127,7 @@ public class MockGrammieGramServiceError implements GrammieGramAPI {
      * Stubbed API settingsUpdate retrofit response
      * @param auth - login token
      * @param boardDisplayName - the display name of the board to check new grams for
-     * @return - stubbed API SettingsResponse object
+     * @return - stubbed API UpdateSettingsResponse object
      */
     @Override
     public Call<CheckNewResponse> checkNewGrams(String auth, String boardDisplayName) {

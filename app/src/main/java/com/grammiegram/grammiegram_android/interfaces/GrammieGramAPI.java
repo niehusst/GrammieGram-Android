@@ -2,6 +2,7 @@ package com.grammiegram.grammiegram_android.interfaces;
 
 import com.grammiegram.grammiegram_android.POJO.BoardListResponse;
 import com.grammiegram.grammiegram_android.POJO.CheckNewResponse;
+import com.grammiegram.grammiegram_android.POJO.GetSettingsResponse;
 import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
 import com.grammiegram.grammiegram_android.POJO.LoginResponse;
 import com.grammiegram.grammiegram_android.POJO.SettingsResponse;
@@ -21,9 +22,11 @@ public interface GrammieGramAPI {
     @GET("list_boards/")
     Call<BoardListResponse> getBoards(@Header("Authorization") String auth);
 
-    //@Headers("Content-Type: application/json")
+    @FormUrlEncoded
     @POST("update_settings/")
-    Call<SettingsResponse> updateSettings(@Header("Authorization") String auth, @Body boolean audioNotifications, @Body boolean profanityFilter);
+    Call<SettingsResponse> updateSettings(@Header("Authorization") String auth,
+                                          @Field("audio_notifications") String audioNotifications,
+                                          @Field("profanity_filter") boolean profanityFilter);
 
     @FormUrlEncoded
     @POST("login/")
@@ -36,6 +39,9 @@ public interface GrammieGramAPI {
     //@Headers("Content-Type: application/json")
     @POST("check_new_add/")
     Call<CheckNewResponse> checkNewGrams(@Header("Authorization") String auth, @Body String boardDisplayName);
+
+    @GET("get_settings/")
+    Call<GetSettingsResponse> getSettings(@Header("Authorization") String auth);
 
     /*
     make board, send gram, get contacts

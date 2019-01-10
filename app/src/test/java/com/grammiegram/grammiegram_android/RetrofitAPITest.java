@@ -3,6 +3,7 @@ package com.grammiegram.grammiegram_android;
 import com.grammiegram.grammiegram_android.POJO.BoardListResponse;
 import com.grammiegram.grammiegram_android.POJO.CheckNewResponse;
 import com.grammiegram.grammiegram_android.POJO.ErrorResponse;
+import com.grammiegram.grammiegram_android.POJO.GetSettingsResponse;
 import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
 import com.grammiegram.grammiegram_android.POJO.LoginResponse;
 import com.grammiegram.grammiegram_android.POJO.SettingsResponse;
@@ -186,7 +187,7 @@ public class RetrofitAPITest {
         GrammieGramAPI mockAPI = new MockGrammieGramService(delegate);
 
         //get and execute api call
-        Call<SettingsResponse> update = mockAPI.updateSettings("Token 123", true, true);
+        Call<SettingsResponse> update = mockAPI.updateSettings("Token 123", "turkey", true);
         Response<SettingsResponse> response = update.execute();
 
         //assert response has expected data
@@ -201,7 +202,7 @@ public class RetrofitAPITest {
         GrammieGramAPI mockAPI = new MockGrammieGramServiceError(delegate);
 
         //get and execute api call (for clarity, input has no effect on resulting stubbed outputs)
-        Call<SettingsResponse> update = mockAPI.updateSettings("Token 123", false, false);
+        Call<SettingsResponse> update = mockAPI.updateSettings("Token 123", "None", false);
         Response<SettingsResponse> response = update.execute();
 
         //assert response has expected data
@@ -247,6 +248,45 @@ public class RetrofitAPITest {
         //get and execute api call (for clarity, input has no effect on resulting stubbed outputs)
         Call<CheckNewResponse> checkNew = mockAPI.checkNewGrams("Token 123", "gramPappy");
         Response<CheckNewResponse> response = checkNew.execute();
+
+        //assert response has expected data
+        Assert.assertFalse(response.isSuccessful());
+        //convert expected returned response to ErrorResponse
+        Converter<ResponseBody, ErrorResponse> errorConverter =
+                retrofit.responseBodyConverter(ErrorResponse.class, new Annotation[0]);
+        ErrorResponse error = errorConverter.convert(response.errorBody());
+
+        Assert.assertEquals(500, response.code());
+        Assert.assertEquals("ServerError", error.getError());
+    }
+
+    @Test
+    public void getSettingsSuccessTest() throws IOException {
+        //create mock retrofit API that returns stubbed successful responses
+        BehaviorDelegate<GrammieGramAPI> delegate = mockRetrofit.create(GrammieGramAPI.class);
+        GrammieGramAPI mockAPI = new MockGrammieGramService(delegate);
+
+        //get and execute api call
+        Call<GetSettingsResponse> settings = mockAPI.getSettings("Token 123");
+        Response<GetSettingsResponse> response = settings.execute();
+
+        //assert response has expected data
+        Assert.assertTrue(response.isSuccessful());
+        Assert.assertTrue(response.body().getReadReceipts());
+        Assert.assertTrue(response.body().getProfanityFilter());
+        Assert.assertFalse(response.body().getInteractiveGram());
+        Assert.assertEquals("cardinal", response.body().getAudioNotifications());
+    }
+
+    @Test
+    public void getSettingsFailureTest() throws IOException {
+        //create mock retrofit API that returns stubbed unsuccessful responses
+        BehaviorDelegate<GrammieGramAPI> delegate = mockRetrofit.create(GrammieGramAPI.class);
+        GrammieGramAPI mockAPI = new MockGrammieGramServiceError(delegate);
+
+        //get and execute api call (for clarity, input has no effect on resulting stubbed outputs)
+        Call<GetSettingsResponse> settings = mockAPI.getSettings("Token 123");
+        Response<GetSettingsResponse> response = settings.execute();
 
         //assert response has expected data
         Assert.assertFalse(response.isSuccessful());

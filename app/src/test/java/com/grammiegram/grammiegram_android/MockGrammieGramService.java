@@ -3,6 +3,7 @@ package com.grammiegram.grammiegram_android;
 import com.grammiegram.grammiegram_android.POJO.Board;
 import com.grammiegram.grammiegram_android.POJO.BoardListResponse;
 import com.grammiegram.grammiegram_android.POJO.CheckNewResponse;
+import com.grammiegram.grammiegram_android.POJO.GetSettingsResponse;
 import com.grammiegram.grammiegram_android.POJO.Gram;
 import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
 import com.grammiegram.grammiegram_android.POJO.LoginResponse;
@@ -110,7 +111,7 @@ public class MockGrammieGramService implements GrammieGramAPI {
      * @return - stubbed API SettingsResponse object
      */
     @Override
-    public Call<SettingsResponse> updateSettings(String auth, boolean audioNotification, boolean profanityFilter) {
+    public Call<SettingsResponse> updateSettings(String auth, String audioNotification, boolean profanityFilter) {
         //set stubbed data into response object
         SettingsResponse settingsResponse =  new SettingsResponse();
         settingsResponse.setUpdated(true);
@@ -145,6 +146,19 @@ public class MockGrammieGramService implements GrammieGramAPI {
         response.setNewGrams(gramsList);
 
         return this.delegate.returningResponse(response).checkNewGrams(auth, boardDisplayName);
+    }
+
+    @Override
+    public Call<GetSettingsResponse> getSettings(String auth) {
+        //build mock response
+        GetSettingsResponse response = new GetSettingsResponse();
+
+        response.setAudioNotifications("cardinal");
+        response.setInteractiveGram(false);
+        response.setProfanityFilter(true);
+        response.setReadReceipts(true);
+
+        return this.delegate.returningResponse(response).getSettings(auth);
     }
 
     /*

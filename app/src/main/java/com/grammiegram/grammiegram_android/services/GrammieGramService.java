@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.grammiegram.grammiegram_android.POJO.BoardListResponse;
 import com.grammiegram.grammiegram_android.POJO.CheckNewResponse;
+import com.grammiegram.grammiegram_android.POJO.GetSettingsResponse;
 import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
 import com.grammiegram.grammiegram_android.POJO.LoginResponse;
 import com.grammiegram.grammiegram_android.POJO.UpdateSettingsResponse;
@@ -149,7 +150,7 @@ public class GrammieGramService {
      * @param audioNotification - whether or not to have active audio notifications
      * @param profanityFilter - whether or not to filter profanity
      */
-    public void updateSettings(String auth, boolean audioNotification, boolean profanityFilter) {
+    public void updateSettings(String auth, String audioNotification, boolean profanityFilter) {
         //get the api call object
         Call<UpdateSettingsResponse> call = api.updateSettings(auth, audioNotification, profanityFilter);
 
@@ -203,6 +204,39 @@ public class GrammieGramService {
 
             @Override
             public void onFailure(Call<CheckNewResponse> call, Throwable t) {
+                //network error, unable to connect with the server for any reason
+                callBack.onNetworkError(t.toString());
+            }
+        });
+    }
+
+    /**
+     * Get the current user preferences stored in the database for the user
+     * that is logged in with auth
+     *
+     * @param auth - authorization token for a avalid user
+     */
+    public void getSettings(String auth) {
+        //get call object
+        Call<GetSettingsResponse> call = api.getSettings(auth);
+
+        //execute asynchronously to avoid hogging UI thread
+        call.enqueue(new Callback<GetSettingsResponse>() {
+
+            @Override
+            public void onResponse(Call<GetSettingsResponse> call, Response<GetSettingsResponse> response) {
+                //handle api response
+                if (response.isSuccessful()) {
+                    callBack.onSuccess(response.body());
+                } else {
+                    callBack.onServerError(response.code(), response.errorBody());
+                    // must close response to avoid memory leaks
+                    response.errorBody().close();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetSettingsResponse> call, Throwable t) {
                 //network error, unable to connect with the server for any reason
                 callBack.onNetworkError(t.toString());
             }

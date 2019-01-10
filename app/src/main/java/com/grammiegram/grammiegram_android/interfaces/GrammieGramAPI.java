@@ -2,6 +2,7 @@ package com.grammiegram.grammiegram_android.interfaces;
 
 import com.grammiegram.grammiegram_android.POJO.BoardListResponse;
 import com.grammiegram.grammiegram_android.POJO.CheckNewResponse;
+import com.grammiegram.grammiegram_android.POJO.GetSettingsResponse;
 import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
 import com.grammiegram.grammiegram_android.POJO.LoginResponse;
 import com.grammiegram.grammiegram_android.POJO.UpdateSettingsResponse;
@@ -20,8 +21,9 @@ public interface GrammieGramAPI {
 
     @FormUrlEncoded
     @POST("update_settings/")
+
     Call<UpdateSettingsResponse> updateSettings(@Header("Authorization") String auth,
-                                                @Field("audio_notifications") boolean audioNotifications,
+                                                @Field("audio_notifications") String audioNotifications,
                                                 @Field("profanity_filter") boolean profanityFilter);
 
     @FormUrlEncoded
@@ -35,6 +37,9 @@ public interface GrammieGramAPI {
     @FormUrlEncoded
     @POST("check_new_add/")
     Call<CheckNewResponse> checkNewGrams(@Header("Authorization") String auth, @Field("display_name") String displayName);
+
+    @GET("get_settings/")
+    Call<GetSettingsResponse> getSettings(@Header("Authorization") String auth);
 
     /*
     make board, send gram, get contacts

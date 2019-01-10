@@ -29,24 +29,6 @@ public class BoardFragmentPagerAdapter extends FragmentStatePagerAdapter {
         this.grams = new ArrayList<>();
     }
 
-    /**
-     * Add a new gram to the adapter
-     *
-     * @param gram - Gram object to add
-     */
-    public void addGram(Gram gram) {
-        grams.add(gram);
-    }
-
-    /**
-     * Delete a Gram from the pager adapter.
-     * Primarily for deleting expired grams.
-     *
-     * @param gram - Gram object to delete
-     */
-    public void removeGram(Gram gram) {
-        grams.remove(gram);
-    }
 
     /**
      * Check for expired grams in the adapter. If expired grams exist,

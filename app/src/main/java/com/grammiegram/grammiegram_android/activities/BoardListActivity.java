@@ -221,7 +221,7 @@ public class BoardListActivity extends AppCompatActivity implements
     @Override
     public void onSuccess(APIResponse response) {
         //make call to getSettings api so that shared prefs has info about users notifications
-        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences("grammiegram", MODE_PRIVATE);
         SetPreferencesService setPrefs = new SetPreferencesService(prefs);
         GrammieGramService settingsAPI = new GrammieGramService(setPrefs);
         settingsAPI.getSettings(prefs.getString("auth_token", "DEFAULT"));

@@ -57,8 +57,9 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
     //thread pool and handler for background service runnables
     private ScheduledExecutorService pool;
     private Handler handler = new Handler();
-    private Runnable dateTimeService = new DateTimeUpdateService();
+    private Runnable dateTimeService;
 
+    //flag to mark
     private boolean initialLoad;
 
     //no grams views
@@ -76,7 +77,8 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         ButterKnife.bind(this);
-        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences("grammiegram", MODE_PRIVATE);
+        dateTimeService = new DateTimeUpdateService();
 
         // Get board data to load from intent
         final Board board = (Board) getIntent().getParcelableExtra("BOARD");
@@ -109,7 +111,8 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
         initialLoad = false;
 
         // Set up runnable tasks to update board and grams
-        BoardUpdateService gramFetchService = new BoardUpdateService(pagerAdapter, this, board.getBoardDisplayName(), prefs);
+        BoardUpdateService gramFetchService = new BoardUpdateService(pagerAdapter, this,
+                board.getBoardDisplayName(), prefs);
         //ScheduledThreadPoolExecutor to periodically check for new grams
         pool = Executors.newScheduledThreadPool(2);
         pool.scheduleAtFixedRate(gramFetchService, 0, BoardUpdateService.CHECK_RATE_SECONDS, TimeUnit.SECONDS);
@@ -209,20 +212,20 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
         //dont play a notification if this is the initial load of existing grams (not new grams)
         if(!initialLoad) {
             //play notification for new grams if audio preference is activated
-            SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+            SharedPreferences prefs = getSharedPreferences("grammiegram", MODE_PRIVATE);
 
             MediaPlayer notification;
             switch (prefs.getString("audio_notifications", "None")) {
                 case "cardinal":
-                    notification = MediaPlayer.create(this, R.raw.GGcardinal);
+                    notification = MediaPlayer.create(this, R.raw.cardinal);
                     notification.start();
                     break;
                 case "turkey":
-                    notification = MediaPlayer.create(this, R.raw.GGturkey);
+                    notification = MediaPlayer.create(this, R.raw.turkey);
                     notification.start();
                     break;
                 case "bells":
-                    notification = MediaPlayer.create(this, R.raw.GGbells);
+                    notification = MediaPlayer.create(this, R.raw.bells);
                     notification.start();
                     break;
                 default:

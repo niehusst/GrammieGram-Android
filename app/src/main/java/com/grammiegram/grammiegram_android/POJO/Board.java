@@ -46,7 +46,7 @@ public class Board implements Parcelable {
         this.boardDisplayName = boardDisplayName;
     }
 
-    /****** Parcel methods to allow Board objects to be passed by intent ******/
+    /* Parcel methods to allow Board objects to be passed by intent */
 
     /**
      * plain constructor for retrofit
@@ -70,7 +70,7 @@ public class Board implements Parcelable {
     /**
      * Write contents of board object to dest parcel
      * @param dest - parcel to write fields to
-     * @param flags
+     * @param flags - extra flags to pass with parcel (unused)
      */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
@@ -80,7 +80,7 @@ public class Board implements Parcelable {
     }
 
     /**
-     * Parceled Board creator
+     * Parceled Board creator factory
      */
     public static final Parcelable.Creator<Board> CREATOR = new Parcelable.Creator<Board>() {
 

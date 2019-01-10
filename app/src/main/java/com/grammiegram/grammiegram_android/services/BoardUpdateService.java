@@ -1,6 +1,7 @@
 package com.grammiegram.grammiegram_android.services;
 
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.grammiegram.grammiegram_android.POJO.CheckNewResponse;
 import com.grammiegram.grammiegram_android.adapters.BoardFragmentPagerAdapter;
@@ -20,7 +21,7 @@ public class BoardUpdateService implements CallBack, Runnable {
 
     private BoardFragmentPagerAdapter adapter;
 
-    private SharedPreferences sharedPreferences;
+    private SharedPreferences prefs;
 
     //The callback implemented by BoardActivity for getGrams api call
     private CallBack gramsListCallBack;
@@ -34,7 +35,7 @@ public class BoardUpdateService implements CallBack, Runnable {
         gramsAPI = new GrammieGramService(cb);
         checkNewAPI = new GrammieGramService(this);
         this.BOARD_DISPLAY_NAME = boardName;
-        this.sharedPreferences = prefs;
+        this.prefs = prefs;
     }
 
     /**
@@ -46,20 +47,22 @@ public class BoardUpdateService implements CallBack, Runnable {
         //destroy expired grams
         this.adapter.removeExpiredGrams();
 
-        //check new
-        checkNewAPI.checkNewGrams(sharedPreferences.getString("auth_token", "DEFAULT"),
-                BOARD_DISPLAY_NAME);
+        //api call to check for new grams
+        checkNewAPI.checkNewGrams(prefs.getString("auth_token", "DEFAULT"), BOARD_DISPLAY_NAME);
     }
 
 
-
-    /**                API checkNewGrams response callbacks                 */
+    /**
+     * Successful response from api to check for new grams. If an update to the board is needed,
+     * then the get grams api method is called to update the adapter that holds gram fragments.
+     * @param response - CheckNewResponse from Retrofit api
+     */
     @Override
     public void onSuccess(APIResponse response) {
+        Log.d("TESTSERVICE", "Checking new");
         CheckNewResponse checkNew = (CheckNewResponse) response;
         if(checkNew.getNeeded()) {
-            String token = sharedPreferences.getString("auth_token", "DEFAULT");
-            gramsAPI.getGrams(token, BOARD_DISPLAY_NAME);
+            gramsAPI.getGrams(prefs.getString("auth_token", "DEFAULT"), BOARD_DISPLAY_NAME);
         }
     }
 

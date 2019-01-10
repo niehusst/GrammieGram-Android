@@ -1,6 +1,7 @@
 package com.grammiegram.grammiegram_android.activities;
 
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -111,6 +112,8 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
         //update clock on UI thread (TODO: check if too blocking of user interaction)
         handler.post(dateTimeService);
 
+        //TODO: make call to getSettings api so that shared prefs from web exist as default
+
     }
 
     /**
@@ -201,9 +204,23 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
     public void onSuccess(APIResponse response) {
         //play notification if audio preference is activated
         SharedPreferences prefs = getPreferences(MODE_PRIVATE);
-        if(prefs.getBoolean("audio_notifications", false)) { //TODO: we have to fetch and add these values to prefs before getting here; they may have already set settings on the website
-            //play media selected by user
-
+        //play media selected by user
+        MediaPlayer notification;
+        switch(prefs.getString("audio_notifications", "None")) {
+            case "cardinal":
+                notification = MediaPlayer.create(this, R.raw.GGcardinal);
+                notification.start();
+                break;
+            case "turkey":
+                notification = MediaPlayer.create(this, R.raw.GGturkey);
+                notification.start();
+                break;
+            case "bells":
+                notification = MediaPlayer.create(this, R.raw.GGbells);
+                notification.start();
+                break;
+            default:
+                //dont play a sound where pref is None
         }
 
         //add grams from response to the adapter if grams are new

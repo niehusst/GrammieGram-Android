@@ -31,7 +31,7 @@ public interface GrammieGramAPI {
     Call<LoginResponse> login(@Field("username") String username, @Field("password") String password);
 
     @FormUrlEncoded
-    @POST("list_grams/")
+    @POST("list_grams/") //TODO: make it possible to receive image grams!!!
     Call<GramsListResponse> getGrams(@Header("Authorization") String authToken, @Field("display_name") String displayName);
 
     @FormUrlEncoded

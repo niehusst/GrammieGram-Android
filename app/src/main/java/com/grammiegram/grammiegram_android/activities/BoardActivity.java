@@ -59,6 +59,8 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
     private Handler handler = new Handler();
     private Runnable dateTimeService = new DateTimeUpdateService();
 
+    private boolean initialLoad;
+
     //no grams views
     @BindView(R.id.date)
     TextView date;
@@ -74,6 +76,7 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         ButterKnife.bind(this);
+        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
 
         // Get board data to load from intent
         final Board board = (Board) getIntent().getParcelableExtra("BOARD");
@@ -81,7 +84,6 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
         // Create the adapter that will return a fragment for each gram
         pagerAdapter = new BoardFragmentPagerAdapter(getSupportFragmentManager());
         //do initial fill of adapter
-        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
         GrammieGramService api = new GrammieGramService(this);
         api.getGrams(prefs.getString("auth_token", "DEFAULT"), board.getBoardDisplayName());
 
@@ -89,12 +91,13 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(pagerAdapter);
 
+        initialLoad = true;
         //handle UI setup depending on whether or not there are grams to show
         if(pagerAdapter.getCount() == 0) {
-            //TODO: set up no grams views?
+            //TODO: set up no grams views to visible??
 
         } else {
-            //TODO: set up grams in fragment pager (other views to gone?)
+            //TODO: set up grams in fragment pager (other views to gone?) would that mean we have to set them back to visible whenever adapter empties?
             FragmentManager manager = getSupportFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
             transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_right,
@@ -103,6 +106,7 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
             transaction.addToBackStack(null);
             transaction.commit();
         }
+        initialLoad = false;
 
         // Set up runnable tasks to update board and grams
         BoardUpdateService gramFetchService = new BoardUpdateService(pagerAdapter, this, board.getBoardDisplayName(), prefs);
@@ -111,9 +115,6 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
         pool.scheduleAtFixedRate(gramFetchService, 0, BoardUpdateService.CHECK_RATE_SECONDS, TimeUnit.SECONDS);
         //update clock on UI thread (TODO: check if too blocking of user interaction)
         handler.post(dateTimeService);
-
-        //TODO: make call to getSettings api so that shared prefs from web exist as default
-
     }
 
     /**
@@ -199,40 +200,55 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
         super.onResume();
     }
 
-    /**                API getGrams response callbacks                 */
+    /**
+     * Load grams that don't already exist in the adapter into it. Play the users preferred
+     * notification media when not the initial load of grams into adapter.
+     */
     @Override
     public void onSuccess(APIResponse response) {
-        //play notification if audio preference is activated
-        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
-        //play media selected by user
-        MediaPlayer notification;
-        switch(prefs.getString("audio_notifications", "None")) {
-            case "cardinal":
-                notification = MediaPlayer.create(this, R.raw.GGcardinal);
-                notification.start();
-                break;
-            case "turkey":
-                notification = MediaPlayer.create(this, R.raw.GGturkey);
-                notification.start();
-                break;
-            case "bells":
-                notification = MediaPlayer.create(this, R.raw.GGbells);
-                notification.start();
-                break;
-            default:
-                //dont play a sound where pref is None
+        //dont play a notification if this is the initial load of existing grams (not new grams)
+        if(!initialLoad) {
+            //play notification for new grams if audio preference is activated
+            SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+
+            MediaPlayer notification;
+            switch (prefs.getString("audio_notifications", "None")) {
+                case "cardinal":
+                    notification = MediaPlayer.create(this, R.raw.GGcardinal);
+                    notification.start();
+                    break;
+                case "turkey":
+                    notification = MediaPlayer.create(this, R.raw.GGturkey);
+                    notification.start();
+                    break;
+                case "bells":
+                    notification = MediaPlayer.create(this, R.raw.GGbells);
+                    notification.start();
+                    break;
+                default:
+                    //dont play a sound when pref is None
+            }
         }
 
-        //add grams from response to the adapter if grams are new
+        //add grams from response to the adapter if grams are not already present
         GramsListResponse gramList = (GramsListResponse) response;
         this.pagerAdapter.addNewGrams(gramList.getGrams());
     }
 
+    /**
+     * Notify user that there is a wifi error.
+     * @param error - String with information on the error (likely technical)
+     */
     @Override
     public void onNetworkError(String error) {
         Toast.makeText(this, getString(R.string.wifi_error), Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Notify user that there is a server error.
+     * @param code - html error code
+     * @param body - body of the error response
+     */
     @Override
     public void onServerError(int code, ResponseBody body) {
         Toast.makeText(this, code + getString(R.string.server_error), Toast.LENGTH_SHORT).show();
@@ -240,8 +256,8 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
 
 
     /**
-     * Inner class for async updating date and time TextViews. Must be an inner class to have access
-     * to the views it needs to update.
+     * Inner class for updating date and time TextViews. Must be an inner class to have access
+     * to the views it needs to update on UI thread.
      */
     class DateTimeUpdateService implements Runnable {
 
@@ -249,7 +265,7 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
         TextView date;
         TextView time;
 
-        public DateTimeUpdateService() {
+        DateTimeUpdateService() {
             this.date = findViewById(R.id.date);
             this.time = findViewById(R.id.time);
         }
@@ -271,6 +287,4 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
             handler.postDelayed(this, 1000);
         }
     }
-
-
 }

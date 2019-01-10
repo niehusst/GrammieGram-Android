@@ -31,6 +31,7 @@ import com.grammiegram.grammiegram_android.interfaces.APIResponse;
 import com.grammiegram.grammiegram_android.interfaces.CallBack;
 import com.grammiegram.grammiegram_android.interfaces.ItemClickListener;
 import com.grammiegram.grammiegram_android.interfaces.OnFragmentInteractionListener;
+import com.grammiegram.grammiegram_android.services.SetPreferencesService;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -219,6 +220,13 @@ public class BoardListActivity extends AppCompatActivity implements
      */
     @Override
     public void onSuccess(APIResponse response) {
+        //make call to getSettings api so that shared prefs has info about users notifications
+        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+        SetPreferencesService setPrefs = new SetPreferencesService(prefs);
+        GrammieGramService settingsAPI = new GrammieGramService(setPrefs);
+        settingsAPI.getSettings(prefs.getString("auth_token", "DEFAULT"));
+
+        //stop displaying error views
         settingsFrag.setVisibility(View.GONE);
         errImg.setVisibility(View.GONE);
         errText.setVisibility(View.GONE);
@@ -308,5 +316,4 @@ public class BoardListActivity extends AppCompatActivity implements
         startActivity(intent);
         finish();
     }
-
 }

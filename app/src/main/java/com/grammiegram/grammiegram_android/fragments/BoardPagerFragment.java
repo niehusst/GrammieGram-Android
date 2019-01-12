@@ -2,6 +2,7 @@ package com.grammiegram.grammiegram_android.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,12 @@ import android.widget.TextView;
 import com.grammiegram.grammiegram_android.POJO.Gram;
 import com.grammiegram.grammiegram_android.R;
 import com.grammiegram.grammiegram_android.interfaces.OnGramFragmentClickListener;
+import com.grammiegram.grammiegram_android.services.GramCarouselService;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,6 +42,8 @@ public class BoardPagerFragment extends Fragment {
 
     private long fragmentCreationTime;
 
+    private ScheduledExecutorService pool;
+
     private OnGramFragmentClickListener mListener;
 
     //views
@@ -44,6 +53,8 @@ public class BoardPagerFragment extends Fragment {
     Button right;
     @BindView(R.id.gram_message)
     TextView gramMessage;
+    @BindView(R.id.message_from)
+    TextView messageSender;
 
     //required empty constructor
     public BoardPagerFragment() {}
@@ -73,7 +84,7 @@ public class BoardPagerFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle gramData) {
         //get fragment creation time
         this.fragmentCreationTime = System.currentTimeMillis();
@@ -93,10 +104,14 @@ public class BoardPagerFragment extends Fragment {
         this.hour = gramData.getInt("HOUR");
         this.minute = gramData.getInt("MINUTE");
 
-        //set the message of the gram
+        //set text views
         gramMessage.setText(this.message);
+        messageSender.setText(getString(R.string.from, senderFirstName, "last")); //TODO: add last getting when api update
 
-        //TODO: async task that will continuously check if currTimeMillis >= fragmentCreateTime+30000. then rightCLick()
+        //async task to cycle through grams in adapter automatically
+        GramCarouselService cycleService = new GramCarouselService(fragmentCreationTime, mListener);
+        pool = Executors.newScheduledThreadPool(1);
+        pool.scheduleAtFixedRate(cycleService, 0, 1, TimeUnit.SECONDS); //check every second for cycling
 
         return rootView;
     }
@@ -143,7 +158,12 @@ public class BoardPagerFragment extends Fragment {
      */
     @Override
     public void onDetach() {
+        //clean up async thread pool service for this fragment
+        if(pool != null) {
+            pool.shutdownNow();
+        }
         super.onDetach();
+        //release reference to parent BoardActivity
         mListener = null;
     }
 }

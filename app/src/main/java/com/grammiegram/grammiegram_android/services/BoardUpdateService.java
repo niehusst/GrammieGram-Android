@@ -1,7 +1,6 @@
 package com.grammiegram.grammiegram_android.services;
 
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.grammiegram.grammiegram_android.POJO.CheckNewResponse;
 import com.grammiegram.grammiegram_android.adapters.BoardFragmentPagerAdapter;
@@ -59,7 +58,6 @@ public class BoardUpdateService implements CallBack, Runnable {
      */
     @Override
     public void onSuccess(APIResponse response) {
-        Log.d("TESTSERVICE", "Checking new");
         CheckNewResponse checkNew = (CheckNewResponse) response;
         if(checkNew.getNeeded()) {
             gramsAPI.getGrams(prefs.getString("auth_token", "DEFAULT"), BOARD_DISPLAY_NAME);

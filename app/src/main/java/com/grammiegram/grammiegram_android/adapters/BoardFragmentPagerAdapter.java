@@ -3,22 +3,27 @@ package com.grammiegram.grammiegram_android.adapters;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.Log;
 
 import com.grammiegram.grammiegram_android.POJO.Gram;
-import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
 import com.grammiegram.grammiegram_android.fragments.BoardPagerFragment;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * A {@link FragmentStatePagerAdapter} that returns a fragment corresponding to
  * one of the sections/tabs/pages.
  */
 public class BoardFragmentPagerAdapter extends FragmentStatePagerAdapter {
-    //TODO: have a list of Fragments so that one doesn't have to be built every time??
+    //TODO: fix rotation button click index ob error. index somehow exceded list size?
 
     private List<Gram> grams;
     private int index;
@@ -29,7 +34,9 @@ public class BoardFragmentPagerAdapter extends FragmentStatePagerAdapter {
         this.grams = new ArrayList<>();
     }
 
-
+    /*
+    TODO: gram traversal is broken, also switch the direction that boardfragments enter and exit when button is clicked
+     */
     /**
      * Check for expired grams in the adapter. If expired grams exist,
      * they are removed from the adapter
@@ -40,10 +47,14 @@ public class BoardFragmentPagerAdapter extends FragmentStatePagerAdapter {
         while(iter.hasNext()) {
             Gram gram = iter.next();
             //if current time is passed til, delete gram
+            Log.d("ADAPTCONT", getTime() + " >=? " + gram.getTill());
             if(getTime() >= convertTillToTime(gram.getTill())) {
                 iter.remove();
+                Log.d("ADAPTSIZE", "iter removed");
+                this.notifyDataSetChanged();
             }
         }
+
     }
 
 
@@ -70,22 +81,28 @@ public class BoardFragmentPagerAdapter extends FragmentStatePagerAdapter {
      * Convert the till filed of a gram into a more usable format
      *
      * @param till - the expiration date of a gram in String form
-     * @return -
+     * @return - the till string converted to a usable int
      */
-    private int convertTillToTime(String till) {
-        //TODO: stub
-        return 0;
+    private long convertTillToTime(String till) {
+        //strip punctuation and get value of string
+        //(example of till) 2019-01-12 10:15:00+00:00
+        till = till.replaceAll("[^0-9]", "");
+        return Long.parseLong(till);
     }
 
 
     /**
-     * Use java.time to get the current date and time in a usable format
+     * Use java.time to get the current date and time in UTC in a usable format.
+     * The time must be in UTC timezone because GrammieGram backend uses all UTC time for
+     * settings expiration and sent dates.
      *
-     * @return - the current date and time in one variable
+     * @return - the current UTC date and time in one variable
      */
-    private int getTime() {
-        //TODO: stub
-        return 0;
+    private long getTime() {
+        DateFormat time = new SimpleDateFormat("yyyyMMddHHmmssSSSS", Locale.US);
+        Calendar calendar = Calendar.getInstance();
+        time.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return Long.parseLong(time.format(calendar.getTime()));
     }
 
     /**
@@ -100,7 +117,7 @@ public class BoardFragmentPagerAdapter extends FragmentStatePagerAdapter {
      * Get the fragment from the adapter at index position
      *
      * @param position - index of fragment to get from adapter
-     * @return - the fragment at index position
+     * @return - the fragment constructed from the gram at index position of List<gram>
      */
     @Override
     public Fragment getItem(int position) {
@@ -112,7 +129,7 @@ public class BoardFragmentPagerAdapter extends FragmentStatePagerAdapter {
     /**
      * Get the number of grams that the board has
      *
-     * @return - number of grams in this board
+     * @return - number of grams stored in this adapter
      */
     @Override
     public int getCount() {
@@ -127,7 +144,7 @@ public class BoardFragmentPagerAdapter extends FragmentStatePagerAdapter {
      * to front if end of adapter list is reached.
      */
     public Fragment getNext() {
-        if(this.index == this.grams.size()-1)
+        if(this.index >= this.grams.size()-1)
             index = 0;
         else
             index++;
@@ -140,12 +157,14 @@ public class BoardFragmentPagerAdapter extends FragmentStatePagerAdapter {
      * to back if start of adapter list is reached.
      */
     public Fragment getPrev() {
-        if(this.index == 0)
+        if(this.index <= 0)
             index = this.grams.size()-1;
         else
             index--;
 
         return getItem(index);
     }
+
+
 }
 

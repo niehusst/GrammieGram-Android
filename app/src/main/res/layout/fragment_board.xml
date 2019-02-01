@@ -7,9 +7,6 @@
     android:background="@color/white"
     tools:context="com.grammiegram.grammiegram_android.fragments.BoardPagerFragment">
 
-    <!-- TODO: add buttons images android:src="@android:drawable/....."
-    TODO: word wrapping so words aren't split???-->
-
     <TextView
         android:id="@+id/message_from"
         android:layout_width="0dp"
@@ -43,29 +40,33 @@
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintTop_creator="1" />
 
-    <Button
+    <ImageButton
         android:id="@+id/btn_left"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:text="left"
-        android:textColor="@color/black"
         android:background="@color/white"
+        android:src="@drawable/arrow_left"
+        android:contentDescription="left"
+        android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/gram_message"
+        app:layout_constraintWidth_percent="0.1"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <ImageButton
         android:id="@+id/btn_right"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:text="right"
+        android:src="@drawable/arrow_right"
+        android:contentDescription="right"
         android:textColor="@color/black"
         android:background="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintWidth_percent="0.1"
         app:layout_constraintStart_toEndOf="@+id/gram_message"
         app:layout_constraintTop_toTopOf="parent" />
 

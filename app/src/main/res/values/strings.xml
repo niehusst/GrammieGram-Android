@@ -40,6 +40,9 @@
     <string name="date">The date is %1$s</string>
     <string name="time">The time is %1$s</string>
     <string name="logo_content_desc">GrammieGram Logo</string>
-    <string name="from">Message from %1$s %2$s</string>
+    <string name="from">Message from %1$s %2$s:</string>
+    <string name="dialogue_text">Are you sure you want to leave the board?</string>
+    <string name="dialogue_positive">Yes</string>
+    <string name="dialogue_negative">No</string>
 
 </resources>

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.grammiegram.grammiegram_android.POJO.Gram;
@@ -33,12 +34,14 @@ public class BoardPagerFragment extends Fragment {
      */
     private String message;
     private String senderFirstName;
+    private String senderLastName;
     private String expirationData;
     private int year;
     private int month;
     private int day;
     private int hour;
     private int minute;
+    private long hash;
 
     private long fragmentCreationTime;
 
@@ -48,9 +51,9 @@ public class BoardPagerFragment extends Fragment {
 
     //views
     @BindView(R.id.btn_left)
-    Button left;
+    ImageButton left;
     @BindView(R.id.btn_right)
-    Button right;
+    ImageButton right;
     @BindView(R.id.gram_message)
     TextView gramMessage;
     @BindView(R.id.message_from)
@@ -71,13 +74,15 @@ public class BoardPagerFragment extends Fragment {
         //bundle up gram data
         Bundle args = new Bundle();
         args.putString("MESSAGE", gram.getMessage());
-        args.putString("SENDER", gram.getSenderFirstName());
+        args.putString("SENDER_FIRST", gram.getSenderFirstName());
+        args.putString("SENDER_LAST", gram.getSenderLastName());
         args.putString("EXPIRATION", gram.getTill());
         args.putInt("YEAR", gram.getYear());
         args.putInt("MONTH", gram.getMonth());
         args.putInt("DAY", gram.getDay());
         args.putInt("HOUR", gram.getHour());
         args.putInt("MINUTE", gram.getMinute());
+        args.putLong("HASH", gram.hashCode());
 
         fragment.setArguments(args);
         return fragment;
@@ -85,17 +90,19 @@ public class BoardPagerFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle gramData) {
+                             Bundle sharedInstanceState) {
         //get fragment creation time
         this.fragmentCreationTime = System.currentTimeMillis();
 
         //inflate layout
         View rootView = inflater.inflate(R.layout.fragment_board, container, false);
 
-        ButterKnife.bind(rootView);
+        ButterKnife.bind(this, rootView);
 
-        //unpack bundle
-        this.senderFirstName = gramData.getString("SENDER");
+        //unpack bundled arguments
+        Bundle gramData = getArguments();
+        this.senderFirstName = gramData.getString("SENDER_FIRST");
+        this.senderLastName = gramData.getString("SENDER_LAST");
         this.message = gramData.getString("MESSAGE");
         this.expirationData = gramData.getString("EXPIRATION");
         this.year = gramData.getInt("YEAR");
@@ -103,16 +110,18 @@ public class BoardPagerFragment extends Fragment {
         this.day = gramData.getInt("DAY");
         this.hour = gramData.getInt("HOUR");
         this.minute = gramData.getInt("MINUTE");
+        this.hash = gramData.getLong("HASH");
 
         //set text views
         gramMessage.setText(this.message);
-        messageSender.setText(getString(R.string.from, senderFirstName, "last")); //TODO: add last getting when api update
+        messageSender.setText(getString(R.string.from, senderFirstName, senderLastName));
 
         //async task to cycle through grams in adapter automatically
+        /* TODO: fix carousel service
         GramCarouselService cycleService = new GramCarouselService(fragmentCreationTime, mListener);
         pool = Executors.newScheduledThreadPool(1);
         pool.scheduleAtFixedRate(cycleService, 0, 1, TimeUnit.SECONDS); //check every second for cycling
-
+        */
         return rootView;
     }
 
@@ -154,6 +163,30 @@ public class BoardPagerFragment extends Fragment {
     }
 
     /**
+     * Prevent GramCarouselService from consuming resources while in the background
+     */
+    @Override
+    public void onPause() {
+        if(pool != null) {
+            pool.shutdownNow();
+        }
+        super.onPause();
+    }
+
+    /**
+     * Start up GramCarouselService again once fragment resumes focus
+     */
+    @Override
+    public void onResume() {
+        /* TODO: fix carousel service
+        GramCarouselService cycleService = new GramCarouselService(fragmentCreationTime, mListener);
+        pool = Executors.newScheduledThreadPool(1);
+        pool.scheduleAtFixedRate(cycleService, 0, 1, TimeUnit.SECONDS); //check every second for cycling
+        */
+        super.onResume();
+    }
+
+    /**
      * Prevent memory leaks by releasing the context reference to be garbage collected
      */
     @Override
@@ -165,6 +198,16 @@ public class BoardPagerFragment extends Fragment {
         super.onDetach();
         //release reference to parent BoardActivity
         mListener = null;
+    }
+
+    /**
+     * Get a unique identifier for this object that ties it to the Gram object
+     * that it is instantiated from.
+     *
+     * @return - the hashCode of the Gram used to instantiate this object
+     */
+    public long getHash() {
+        return this.hash;
     }
 }
 

@@ -11,9 +11,17 @@ public class Gram {
     @Expose
     private String senderFirstName;
 
+    @SerializedName("sender_last_name")
+    @Expose
+    private String senderLastName;
+
     @SerializedName("message")
     @Expose
     private String message;
+
+    @SerializedName("id")
+    @Expose
+    private String id;
 
     @SerializedName("till")
     @Expose
@@ -53,6 +61,22 @@ public class Gram {
 
     public void setSenderFirstName(String senderFirstName) {
         this.senderFirstName = senderFirstName;
+    }
+
+    public String getSenderLastName() {
+        return senderLastName;
+    }
+
+    public void setSenderLastName(String senderLastName) {
+        this.senderLastName = senderLastName;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getTill() {
@@ -108,7 +132,7 @@ public class Gram {
         try {
             Gram gram = (Gram) obj;
             //Grams are the same if they have the exact same
-            return  this.hashCode() == gram.hashCode();
+            return  this.getId().equals(gram.getId());
         } catch(ClassCastException objNotGram) {
             return false;
         }
@@ -120,4 +144,5 @@ public class Gram {
         builder.append(this.month).append(this.day).append(this.hour).append(this.minute);
         return Integer.parseInt(builder.toString());
     }
+
 }

@@ -5,7 +5,10 @@ import com.grammiegram.grammiegram_android.POJO.CheckNewResponse;
 import com.grammiegram.grammiegram_android.POJO.GetSettingsResponse;
 import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
 import com.grammiegram.grammiegram_android.POJO.LoginResponse;
+import com.grammiegram.grammiegram_android.POJO.MarkNotNewResponse;
 import com.grammiegram.grammiegram_android.POJO.UpdateSettingsResponse;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -40,6 +43,10 @@ public interface GrammieGramAPI {
 
     @GET("get_settings/")
     Call<GetSettingsResponse> getSettings(@Header("Authorization") String auth);
+
+    @FormUrlEncoded
+    @POST("mark_not_new/")
+    Call<MarkNotNewResponse> markNotNewGrams(@Header("Authorization") String auth, @Field("ids") List<Integer> ids);
 
     /*
     make board, send gram, get contacts

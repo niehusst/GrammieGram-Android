@@ -7,9 +7,12 @@ import com.grammiegram.grammiegram_android.POJO.CheckNewResponse;
 import com.grammiegram.grammiegram_android.POJO.GetSettingsResponse;
 import com.grammiegram.grammiegram_android.POJO.GramsListResponse;
 import com.grammiegram.grammiegram_android.POJO.LoginResponse;
+import com.grammiegram.grammiegram_android.POJO.MarkNotNewResponse;
 import com.grammiegram.grammiegram_android.POJO.UpdateSettingsResponse;
 import com.grammiegram.grammiegram_android.interfaces.CallBack;
 import com.grammiegram.grammiegram_android.interfaces.GrammieGramAPI;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -214,7 +217,7 @@ public class GrammieGramService {
      * Get the current user preferences stored in the database for the user
      * that is logged in with auth
      *
-     * @param auth - authorization token for a avalid user
+     * @param auth - authorization token for a valid user
      */
     public void getSettings(String auth) {
         //get call object
@@ -243,4 +246,37 @@ public class GrammieGramService {
         });
     }
 
+    /**
+     * API call that takes a list of Gram ID numbers corresponding to grams that were formerly new,
+     * but have now been received, and must be marked as no longer new.
+     *
+     * @param auth - authorization token for a valid user
+     * @param ids - List of id numbers of new grams (that have been received) to mark as not new
+     */
+    public void markNotNewGrams(String auth, List<Integer> ids) {
+        //get call object
+        Call<MarkNotNewResponse> call = api.markNotNewGrams(auth, ids);
+
+        //execute asynchronously to avoid hogging UI thread
+        call.enqueue(new Callback<MarkNotNewResponse>() {
+
+            @Override
+            public void onResponse(Call<MarkNotNewResponse> call, Response<MarkNotNewResponse> response) {
+                //handle api response
+                if (response.isSuccessful()) {
+                    callBack.onSuccess(response.body());
+                } else {
+                    callBack.onServerError(response.code(), response.errorBody());
+                    // must close response to avoid memory leaks
+                    response.errorBody().close();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MarkNotNewResponse> call, Throwable t) {
+                //network error, unable to connect with the server for any reason
+                callBack.onNetworkError(t.toString());
+            }
+        });
+    }
 }

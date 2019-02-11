@@ -1,11 +1,13 @@
 package com.grammiegram.grammiegram_android.POJO;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Gram {
+public class Gram implements Parcelable {
 
     @SerializedName("sender_first_name")
     @Expose
@@ -21,7 +23,7 @@ public class Gram {
 
     @SerializedName("id")
     @Expose
-    private String id;
+    private Integer id;
 
     @SerializedName("till")
     @Expose
@@ -71,11 +73,11 @@ public class Gram {
         this.senderLastName = senderLastName;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -131,18 +133,118 @@ public class Gram {
     public boolean equals(@Nullable Object obj) {
         try {
             Gram gram = (Gram) obj;
-            //Grams are the same if they have the exact same
-            return  this.getId().equals(gram.getId());
+            //prevent null pointer exception
+            if(gram == null) return false;
+
+            //Grams are the same if they have the exact same Id
+            return  this.hashCode() == gram.hashCode(); //TODO: change back to ID when api is updated
         } catch(ClassCastException objNotGram) {
             return false;
         }
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode() { //TODO: make this return id instead. when api update
         StringBuilder builder = new StringBuilder(this.year);
         builder.append(this.month).append(this.day).append(this.hour).append(this.minute);
         return Integer.parseInt(builder.toString());
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(senderFirstName);
+        parcel.writeString(senderLastName);
+        parcel.writeString(message);
+        if (id == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeInt(id);
+        }
+        parcel.writeString(till);
+        if (year == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeInt(year);
+        }
+        if (month == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeInt(month);
+        }
+        if (day == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeInt(day);
+        }
+        if (hour == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeInt(hour);
+        }
+        if (minute == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeInt(minute);
+        }
+    }
+
+    protected Gram(Parcel in) {
+        senderFirstName = in.readString();
+        senderLastName = in.readString();
+        message = in.readString();
+        if (in.readByte() == 0) {
+            id = null;
+        } else {
+            id = in.readInt();
+        }
+        till = in.readString();
+        if (in.readByte() == 0) {
+            year = null;
+        } else {
+            year = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            month = null;
+        } else {
+            month = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            day = null;
+        } else {
+            day = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            hour = null;
+        } else {
+            hour = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            minute = null;
+        } else {
+            minute = in.readInt();
+        }
+    }
+
+    public static final Creator<Gram> CREATOR = new Creator<Gram>() {
+        @Override
+        public Gram createFromParcel(Parcel in) {
+            return new Gram(in);
+        }
+
+        @Override
+        public Gram[] newArray(int size) {
+            return new Gram[size];
+        }
+    };
 }

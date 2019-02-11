@@ -1,5 +1,7 @@
 package com.grammiegram.grammiegram_android.services;
 
+import android.util.Log;
+
 import com.grammiegram.grammiegram_android.interfaces.OnGramFragmentClickListener;
 
 /**
@@ -7,6 +9,9 @@ import com.grammiegram.grammiegram_android.interfaces.OnGramFragmentClickListene
  * from when the fragment was created).
  */
 public class GramCarouselService implements Runnable {
+    //TODO: fix error of service running too often.
+    // perhaps bad delay calls caused by too many fragments erroniously being created??
+    // possibly because statepageradapter always has 3 fragments open?
 
     private long gramInitTime;
     private OnGramFragmentClickListener parentActivity;
@@ -23,6 +28,8 @@ public class GramCarouselService implements Runnable {
     public void run() {
         long currTimeMillis = System.currentTimeMillis();
         if(currTimeMillis >= gramInitTime+30000) {
+            Log.d("FRAGMENT", "cycling in fragment. curr time " + currTimeMillis + " is passed " + gramInitTime);
+            Log.d("FRAGMENT", "time diff is " + (currTimeMillis - gramInitTime));
             parentActivity.onRightClick();
         }
     }

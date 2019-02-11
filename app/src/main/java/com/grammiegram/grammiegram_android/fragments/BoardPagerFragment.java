@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,17 +33,9 @@ public class BoardPagerFragment extends Fragment {
     if yes, add a class bool that dictates wheter a message has been read already or not so that
     repeated calls to the api are not made and add onCLickListener for text veiw
      */
-    private String message;
-    private String senderFirstName;
-    private String senderLastName;
-    private String expirationData;
-    private int year;
-    private int month;
-    private int day;
-    private int hour;
-    private int minute;
-    private long hash;
 
+    private int hash;
+    public String msg;
     private long fragmentCreationTime;
 
     private ScheduledExecutorService pool;
@@ -75,14 +68,8 @@ public class BoardPagerFragment extends Fragment {
         Bundle args = new Bundle();
         args.putString("MESSAGE", gram.getMessage());
         args.putString("SENDER_FIRST", gram.getSenderFirstName());
-        args.putString("SENDER_LAST", gram.getSenderLastName());
-        args.putString("EXPIRATION", gram.getTill());
-        args.putInt("YEAR", gram.getYear());
-        args.putInt("MONTH", gram.getMonth());
-        args.putInt("DAY", gram.getDay());
-        args.putInt("HOUR", gram.getHour());
-        args.putInt("MINUTE", gram.getMinute());
-        args.putLong("HASH", gram.hashCode());
+        //args.putString("SENDER_LAST", gram.getSenderLastName()); //TODO: add when api update
+        args.putInt("HASH", gram.hashCode()); //TODO: Change to get id when api update
 
         fragment.setArguments(args);
         return fragment;
@@ -101,19 +88,14 @@ public class BoardPagerFragment extends Fragment {
 
         //unpack bundled arguments
         Bundle gramData = getArguments();
-        this.senderFirstName = gramData.getString("SENDER_FIRST");
-        this.senderLastName = gramData.getString("SENDER_LAST");
-        this.message = gramData.getString("MESSAGE");
-        this.expirationData = gramData.getString("EXPIRATION");
-        this.year = gramData.getInt("YEAR");
-        this.month = gramData.getInt("MONTH");
-        this.day = gramData.getInt("DAY");
-        this.hour = gramData.getInt("HOUR");
-        this.minute = gramData.getInt("MINUTE");
-        this.hash = gramData.getLong("HASH");
+        String senderFirstName = gramData.getString("SENDER_FIRST");
+        String senderLastName = "";//gramData.getString("SENDER_LAST"); //TODO: add wehn api update
+        String message = gramData.getString("MESSAGE");
+        this.msg = message;
+        this.hash = gramData.getInt("HASH");
 
         //set text views
-        gramMessage.setText(this.message);
+        gramMessage.setText(message);
         messageSender.setText(getString(R.string.from, senderFirstName, senderLastName));
 
         //async task to cycle through grams in adapter automatically
@@ -206,8 +188,6 @@ public class BoardPagerFragment extends Fragment {
      *
      * @return - the hashCode of the Gram used to instantiate this object
      */
-    public long getHash() {
-        return this.hash;
-    }
+    public int getHash() { return this.hash; }
 }
 

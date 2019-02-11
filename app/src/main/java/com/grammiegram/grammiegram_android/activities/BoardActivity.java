@@ -1,17 +1,19 @@
 package com.grammiegram.grammiegram_android.activities;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,8 +45,9 @@ import okhttp3.ResponseBody;
  * adapter is used to manage gram holding fragments.
  */
 public class BoardActivity extends AppCompatActivity implements CallBack, OnGramFragmentClickListener {
-    //TODO: does it lanuch first frag if it starts with no grams??
-    //TODO: add api call for get current settings
+    //TODO: before release, board MUST have picture messages and a way to handle interactive grams
+    //TODO: must be able to detect active grams missed during a period of momentary wifi loss. Skip checknew, just always get grams and compare through?
+    //TODO: tablet performance is significantly worse...
     /*
      * The {@link android.support.v4.app.FragmentStatePagerAdapter} that will provide
      * fragments for each of the sections that hold grams.
@@ -67,6 +70,10 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
     TextView date;
     @BindView(R.id.time)
     TextView time;
+    @BindView(R.id.no_grams)
+    TextView noGramsText;
+    @BindView(R.id.no_grams_logo)
+    ImageView logo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,40 +90,24 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
         // Get board data to load from intent
         final Board board = (Board) getIntent().getParcelableExtra("BOARD");
 
+        // Set up the ViewPager with the board fragment adapter.
+        mViewPager = (ViewPager) findViewById(R.id.gram_container);
         // Create the adapter that will return a fragment for each gram
         pagerAdapter = new BoardFragmentPagerAdapter(getSupportFragmentManager());
-        //do initial fill of adapter
-        GrammieGramService api = new GrammieGramService(this);
-        api.getGrams(prefs.getString("auth_token", "DEFAULT"), board.getBoardDisplayName());
-
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(pagerAdapter);
 
-        initialLoad = true;
-        //handle UI setup depending on whether or not there are grams to show
-        if(pagerAdapter.getCount() == 0) {
-            //TODO: set up no grams views to visible??
-
-        } else {
-            //TODO: set up grams in fragment pager (other views to gone?) would that mean we have to set them back to visible whenever adapter empties?
-            FragmentManager manager = getSupportFragmentManager();
-            FragmentTransaction transaction = manager.beginTransaction();
-            transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_right,
-                    R.anim.slide_in_right, R.anim.slide_out_right);
-            transaction.replace(R.id.board_list_container, pagerAdapter.getItem(0));
-            transaction.addToBackStack(null);
-            transaction.commit();
-        }
-        initialLoad = false;
+        //do initial fill of adapter
+        this.initialLoad = true;
+        GrammieGramService api = new GrammieGramService(this);
+        api.getGrams(prefs.getString("auth_token", "DEFAULT"), board.getBoardDisplayName());
 
         // Set up runnable tasks to update board and grams
         BoardUpdateService gramFetchService = new BoardUpdateService(pagerAdapter, this,
                 board.getBoardDisplayName(), prefs);
         //ScheduledThreadPoolExecutor to periodically check for new grams
-        pool = Executors.newScheduledThreadPool(2);
+        pool = Executors.newScheduledThreadPool(1);
         pool.scheduleAtFixedRate(gramFetchService, 0, BoardUpdateService.CHECK_RATE_SECONDS, TimeUnit.SECONDS);
-        //update clock on UI thread (TODO: check if too blocking of user interaction)
+        //update clock on UI thread
         handler.post(dateTimeService);
     }
 
@@ -125,51 +116,54 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
      */
     @Override
     public void onBackPressed() {
-        //TODO: popup message asking if they really want to close board? launch board list
-        Toast.makeText(this, "Are you sure you want to leave the board?", Toast.LENGTH_SHORT).show();
+        //popup message asking if they really want to close board.
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        //Yes button clicked, launch boardlist and finish board
+                        launchBoardListActivity();
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //No button clicked, do nothing
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getString(R.string.dialogue_text)).setPositiveButton(getString(R.string.dialogue_positive),
+                dialogClickListener).setNegativeButton(getString(R.string.dialogue_negative), dialogClickListener).show();
     }
 
 
     /**
-     * Load the previous gram from the fragment state pager adapter and
-     * remove the current one.
+     * Cycle to the previous gram from the fragment state pager adapter
      */
     @Override
     public void onLeftClick() {
-        FragmentManager manager = getSupportFragmentManager();
-
-        //delete old fragment
-        manager.popBackStack();
-
-        //setup new fragment
-        Fragment prevGram = pagerAdapter.getPrev();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,
-                R.anim.slide_in_right, R.anim.slide_out_left);
-        transaction.replace(R.id.container, prevGram);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        //update viewPager
+        mViewPager.setCurrentItem(pagerAdapter.getPrev());
     }
 
     /**
-     * Load the next gram from the fragment state pager adapter and
-     * remove the current one.
+     * Cycle to the next gram from the fragment state pager adapter
      */
     @Override
     public void onRightClick() {
-        FragmentManager manager = getSupportFragmentManager();
+        //update ViewPager
+        mViewPager.setCurrentItem(pagerAdapter.getNext());
+    }
 
-        //delete old fragment
-        manager.popBackStack();
-
-        //setup new fragment
-        Fragment nextGram = pagerAdapter.getNext();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right,
-                R.anim.slide_in_left, R.anim.slide_out_right);
-        transaction.replace(R.id.container, nextGram);
-        transaction.addToBackStack(null);
-        transaction.commit();
+    /**
+     * Launch a BoardListActivity and finish the board activity.
+     */
+    private void launchBoardListActivity() {
+        Intent intent = new Intent(this, BoardListActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     /**
@@ -203,12 +197,20 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
         super.onResume();
     }
 
+    /*
+    TODO: when adding grams to adapter, set bg views to invisible/gone
+    TODO: when remove grams, check if adapter is now empty. if so, bring back no grams views
+     */
     /**
      * Load grams that don't already exist in the adapter into it. Play the users preferred
      * notification media when not the initial load of grams into adapter.
      */
     @Override
     public void onSuccess(APIResponse response) {
+        //add grams from response to the adapter if grams are not already present
+        GramsListResponse gramList = (GramsListResponse) response;
+        this.pagerAdapter.addNewGrams(gramList.getGrams());
+
         //dont play a notification if this is the initial load of existing grams (not new grams)
         if(!initialLoad) {
             //play notification for new grams if audio preference is activated
@@ -232,11 +234,23 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
                     //dont play a sound when pref is None
             }
         }
-
-        //add grams from response to the adapter if grams are not already present
-        GramsListResponse gramList = (GramsListResponse) response;
-        this.pagerAdapter.addNewGrams(gramList.getGrams());
+        //handle UI setup depending on whether or not there are grams to show
+        if (pagerAdapter.getCount() == 0) {
+            //make no grams views visible
+            noGramsText.setVisibility(View.VISIBLE);
+            logo.setVisibility(View.VISIBLE);
+            date.setVisibility(View.VISIBLE);
+            time.setVisibility(View.VISIBLE);
+        } else {
+            //set no-grams views to gone
+            noGramsText.setVisibility(View.GONE);
+            logo.setVisibility(View.GONE);
+            date.setVisibility(View.GONE);
+            time.setVisibility(View.GONE);
+        }
+        this.initialLoad = false;
     }
+
 
     /**
      * Notify user that there is a wifi error.
@@ -281,7 +295,7 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
         public void run() {
             //update clock text views
             DateFormat timeFormat = new SimpleDateFormat("h:mm a", Locale.US);
-            DateFormat dateFormat = new SimpleDateFormat("EEE, MMM d yyyy", Locale.US);
+            DateFormat dateFormat = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.US);
             Calendar cal = Calendar.getInstance();
             this.date.setText(dateFormat.format(cal.getTime()));
             this.time.setText(timeFormat.format(cal.getTime()));

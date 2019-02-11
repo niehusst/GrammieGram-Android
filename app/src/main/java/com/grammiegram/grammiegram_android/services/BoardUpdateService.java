@@ -1,6 +1,7 @@
 package com.grammiegram.grammiegram_android.services;
 
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.grammiegram.grammiegram_android.POJO.CheckNewResponse;
 import com.grammiegram.grammiegram_android.adapters.BoardFragmentPagerAdapter;
@@ -48,6 +49,9 @@ public class BoardUpdateService implements CallBack, Runnable {
 
         //api call to check for new grams
         checkNewAPI.checkNewGrams(prefs.getString("auth_token", "DEFAULT"), BOARD_DISPLAY_NAME);
+
+        //TODO: complete refresh of the viewpager where grams are removed or added????
+        //TODO: alert board activity if adapter becomes empty
     }
 
 

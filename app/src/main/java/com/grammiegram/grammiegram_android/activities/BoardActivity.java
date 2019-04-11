@@ -93,7 +93,7 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
         // Set up the ViewPager with the board fragment adapter.
         mViewPager = (ViewPager) findViewById(R.id.gram_container);
         // Create the adapter that will return a fragment for each gram
-        pagerAdapter = new BoardFragmentPagerAdapter(getSupportFragmentManager());
+        pagerAdapter = new BoardFragmentPagerAdapter(getSupportFragmentManager(), mViewPager);
         mViewPager.setAdapter(pagerAdapter);
 
         //do initial fill of adapter
@@ -112,7 +112,9 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
     }
 
     /**
-     * Prevent back press from destroying open grams fragment
+     * Prevent back press from destroying open grams fragment; when back is pressed,
+     * it opens a dialog window that that gives user the option to close the board activity
+     * or take no action.
      */
     @Override
     public void onBackPressed() {
@@ -212,7 +214,7 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
         this.pagerAdapter.addNewGrams(gramList.getGrams());
 
         //dont play a notification if this is the initial load of existing grams (not new grams)
-        if(!initialLoad) {
+        if(!initialLoad) { //TODO: notification sounds are broken: happen too often when not new grams
             //play notification for new grams if audio preference is activated
             SharedPreferences prefs = getSharedPreferences("grammiegram", MODE_PRIVATE);
 
@@ -231,7 +233,7 @@ public class BoardActivity extends AppCompatActivity implements CallBack, OnGram
                     notification.start();
                     break;
                 default:
-                    //dont play a sound when pref is None
+                    //dont play a sound when pref is "None"
             }
         }
         //handle UI setup depending on whether or not there are grams to show

@@ -20,12 +20,23 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+/*
+    TODO: make the adapter move which frag is current if deleting it
+    TODO: for some reason, doesn't recive new grams after the 1st one??
+    TODO: figure out why the log.v for remove grams is never called
 
+    -the gram removal ~kind of works~, it removes the correct gram, but on removal the screen goes white until
+     swipe (then allowing the correct grams to appear)
+    -the notification sound is repeatedly going off, even on the initial load (likely due to the constant refreshes
+     of the adapter caused by POSITION_NONE
+    -after any gram receval/removal, incoming grams can't be received??
+     */
 /**
  * A {@link FragmentStatePagerAdapter} that returns a fragment corresponding to
  * one of the sections/tabs/pages.
@@ -39,17 +50,18 @@ public class BoardFragmentPagerAdapter extends PagerAdapter {
     private final FragmentManager mFragmentManager;
     private FragmentTransaction mCurTransaction = null;
     private Fragment mCurrentPrimaryItem = null;
+    private ViewPager mViewPager;
 
     /**
      * Create a fresh adapter and starts stuff
      *
      * @param fm - the fragment manager to manage fragments in this adapter
      */
-    public BoardFragmentPagerAdapter(FragmentManager fm) {
+    public BoardFragmentPagerAdapter(FragmentManager fm, ViewPager vp) {
         this.mFragmentManager = fm;
         this.index = 0; //the index of the current primary item
         this.grams = new LinkedList<>();
-
+        this.mViewPager = vp;
     }
 
 
@@ -58,25 +70,25 @@ public class BoardFragmentPagerAdapter extends PagerAdapter {
      * they are removed from the adapter
      */
     public void removeExpiredGrams() {
-        boolean removedGrams = false; //TODO: get rid of this?
+        boolean removedGrams = false;
+
         //iterate grams in adapter
         Iterator<Gram> iter = this.grams.iterator();
         while(iter.hasNext()) {
             Gram gram = iter.next();
             //if current time is passed til, delete gram
             if(getTime() >= convertTillToTime(gram.getTill())) {
-                if(DEBUG)
-                    Log.d("REMOVEGRAM", "time is " + getTime() + " gram expire is " + convertTillToTime(gram.getTill()));
-                //remove expired gram from adapter state data
-                //this.removeItemState(this.grams.indexOf(gram), BoardPagerFragment.newInstance(gram));
                 //remove from adapter list
                 iter.remove();
-                if(DEBUG) Log.v("REMOVAL", "removed gram: " + gram.getMessage());
+                if(DEBUG) Log.v(TAG, "removed gram: " + gram.getMessage());
                 removedGrams = true;
             }
         }
 
-        if(removedGrams) { this.notifyDataSetChanged(); }
+        if(removedGrams) {
+            this.notifyDataSetChanged();
+            if(DEBUG) Log.v(TAG, "removed grams");
+        }
     }
 
     /**
@@ -85,23 +97,24 @@ public class BoardFragmentPagerAdapter extends PagerAdapter {
      * @param responseGrams - list of grams from and api getGrams response
      */
     public void addNewGrams(List<Gram> responseGrams) {
-        boolean addedGrams = false; //TODO: get rid of this?
+        boolean addedGrams = false;
 
-        //get hashmap of adapter grams
-        HashMap<Gram, Integer> adapterGrams = new HashMap<>();
-        for(Gram gram : this.getGrams()) {
-            adapterGrams.put(gram, 1); //arbitrary second value
-        }
+        //get hashset of grams in the adapter
+        HashSet<Gram> adapterGrams = new HashSet<>(this.getGrams());
 
         for(Gram gram : responseGrams) {
-            if(!adapterGrams.containsKey(gram)) {
+            if(!adapterGrams.contains(gram)) {
                 //add new gram to front of adapter list
                 this.grams.addFirst(gram);
                 addedGrams = true;
             }
         }
-
-        if(addedGrams) { this.notifyDataSetChanged(); }
+        //TODO: add api call for sending "recieved" info back to mark not new
+        if(addedGrams) {
+            this.notifyDataSetChanged();
+            mViewPager.setCurrentItem(0);
+            if(DEBUG) Log.v(TAG, "added grams");
+        }
     }
 
     /**
@@ -148,13 +161,12 @@ public class BoardFragmentPagerAdapter extends PagerAdapter {
      */
     @Override
     public int getItemPosition(@NonNull Object object) {
-        //tell adapter to refresh all views on notifyDataSetChange no matter what
-        int pos = grams.indexOf((Gram) object);
+        /*int pos = grams.indexOf(((BoardPagerFragment)object).getGram());
         if(pos != -1) {
             return pos;
-        } else {
-            return POSITION_NONE;
-        }
+        } else {*/
+            return POSITION_NONE; // force adapter to update
+        //} //TODO: if this doesnt' work, try reinstantiating the viewpager with this as the adapter
     }
 
     /**
@@ -182,8 +194,7 @@ public class BoardFragmentPagerAdapter extends PagerAdapter {
      */
     @Override
     public void startUpdate(ViewGroup container) {
-        //TODO: make the transaction manager move to a different page if primary is being deltetd
-        if(DEBUG) Log.v(TAG, "strt update called");
+        //TODO: make the transaction manager move to a different page if primary is being deltetd? here?
     }
 
 
@@ -196,19 +207,11 @@ public class BoardFragmentPagerAdapter extends PagerAdapter {
      */
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        // If we already have this item instantiated, there is nothing
-        // to do.  This can happen when we are restoring the entire pager
-        // from its saved state, where the fragment manager has already
-        /* taken care of restoring the fragments we previously had instantiated.
-        if (mFragments.size() > position) {
-            Fragment f = mFragments.get(position);
-            if (f != null) {
-                return f;                  // save time/ make swiping better?
-            }
-        }*/
         if (mCurTransaction == null) {
             mCurTransaction = mFragmentManager.beginTransaction();
         }
+        if(DEBUG) Log.v(TAG, "instantiating item #" + position + ": " + grams.get(position).getMessage());
+
         Fragment fragment = BoardPagerFragment.newInstance(grams.get(position));
 
         fragment.setMenuVisibility(false);
@@ -229,8 +232,8 @@ public class BoardFragmentPagerAdapter extends PagerAdapter {
         if (mCurTransaction == null) {
             mCurTransaction = mFragmentManager.beginTransaction();
         }
-        if(DEBUG) Log.v(TAG, "Removing item #" + position + ": f=" + object
-                + " v=" + ((Fragment)object).getView());
+        if(DEBUG) Log.v(TAG, "Removing frag trans item #" + position + ": f=" + object
+                + " m=" + ((BoardPagerFragment)object).getGram().getMessage());
 
         mCurTransaction.remove(fragment);
     }

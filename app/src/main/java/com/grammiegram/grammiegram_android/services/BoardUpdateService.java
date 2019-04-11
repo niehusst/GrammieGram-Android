@@ -43,21 +43,19 @@ public class BoardUpdateService implements CallBack, Runnable {
      * for new grams to add to adapter.
      */
     @Override
-    public void run() {
+    public void run() { //TODO: somehow stops running in bg after adding a gram. (onSuccess causes exit of loop??)
         //destroy expired grams
         this.adapter.removeExpiredGrams();
 
         //api call to check for new grams
         checkNewAPI.checkNewGrams(prefs.getString("auth_token", "DEFAULT"), BOARD_DISPLAY_NAME);
-
-        //TODO: complete refresh of the viewpager where grams are removed or added????
-        //TODO: alert board activity if adapter becomes empty
     }
 
 
     /**
      * Successful response from api to check for new grams. If an update to the board is needed,
      * then the get grams api method is called to update the adapter that holds gram fragments.
+     *
      * @param response - CheckNewResponse from Retrofit api
      */
     @Override

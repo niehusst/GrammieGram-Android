@@ -30,13 +30,12 @@ public class BoardPagerFragment extends Fragment {
 
     /*
     TODO: add a fragment interaction listener for sending read reciepts????
-    if yes, add a class bool that dictates wheter a message has been read already or not so that
+    if yes, add a bool field to this that dictates wheter a frag has been read already or not so that
     repeated calls to the api are not made and add onCLickListener for text veiw
      */
 
-    private int hash;
-    public String msg;
-    private long fragmentCreationTime;
+    private Gram gram;
+    private long fragmentCreationTime; //for carosel service
 
     private ScheduledExecutorService pool;
 
@@ -64,12 +63,9 @@ public class BoardPagerFragment extends Fragment {
         //TODO: what about images?? overload? ARE IMAGES EVEN IN API??
         //TODO: make a separate type of fragment that has an image view that this adapter can manage as well (link with interface?)
         BoardPagerFragment fragment = new BoardPagerFragment();
-        //bundle up gram data
+        //pass gram to new fragment
         Bundle args = new Bundle();
-        args.putString("MESSAGE", gram.getMessage());
-        args.putString("SENDER_FIRST", gram.getSenderFirstName());
-        //args.putString("SENDER_LAST", gram.getSenderLastName()); //TODO: add when api update
-        args.putInt("HASH", gram.hashCode()); //TODO: Change to get id when api update
+        args.putParcelable("GRAM", gram);
 
         fragment.setArguments(args);
         return fragment;
@@ -87,16 +83,19 @@ public class BoardPagerFragment extends Fragment {
         ButterKnife.bind(this, rootView);
 
         //unpack bundled arguments
-        Bundle gramData = getArguments();
-        String senderFirstName = gramData.getString("SENDER_FIRST");
-        String senderLastName = "";//gramData.getString("SENDER_LAST"); //TODO: add wehn api update
-        String message = gramData.getString("MESSAGE");
-        this.msg = message;
-        this.hash = gramData.getInt("HASH");
+        Bundle parcelData = getArguments();
+        if(parcelData != null) {
+            this.gram = getArguments().getParcelable("GRAM");
+        }
+        if(this.gram != null) {
+            String senderFirstName = this.gram.getSenderFirstName();
+            String senderLastName = "";//this.gram.getSenderLastName(); //TODO: add wehn api update
+            String message = this.gram.getMessage();
 
-        //set text views
-        gramMessage.setText(message);
-        messageSender.setText(getString(R.string.from, senderFirstName, senderLastName));
+            //set text views
+            gramMessage.setText(message);
+            messageSender.setText(getString(R.string.from, senderFirstName, senderLastName));
+        }
 
         //async task to cycle through grams in adapter automatically
         /* TODO: fix carousel service
@@ -188,6 +187,8 @@ public class BoardPagerFragment extends Fragment {
      *
      * @return - the hashCode of the Gram used to instantiate this object
      */
-    public int getHash() { return this.hash; }
+    public int getHash() { return this.gram.hashCode(); }
+
+    public Gram getGram() { return this.gram; }
 }
 

@@ -27,15 +27,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 /*
-    TODO: make the adapter move which frag is current if deleting it
-    TODO: for some reason, doesn't recive new grams after the 1st one??
-    TODO: figure out why the log.v for remove grams is never called
+    TODO: for some reason, doesn't recive new grams after the 1st one?? (check the update service)
+    TODO: fix notification playing error (likely related to ViewPager constantly refreshing content)
 
     -the gram removal ~kind of works~, it removes the correct gram, but on removal the screen goes white until
      swipe (then allowing the correct grams to appear)
     -the notification sound is repeatedly going off, even on the initial load (likely due to the constant refreshes
      of the adapter caused by POSITION_NONE
-    -after any gram receval/removal, incoming grams can't be received??
+    -after any gram receival/removal, incoming grams can't be received?? (idk if grams can expire either??)
      */
 /**
  * A {@link FragmentStatePagerAdapter} that returns a fragment corresponding to
